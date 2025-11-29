@@ -10,15 +10,24 @@ import tkinter as tk
 
 window = tk.Tk()
 window.title("College Conquest UVM Edition")
-canvas = tk.Canvas(window, width=400, height=400, bg="lightgreen")
-canvas.grid()
+
+# Allows dimensions of window to change.
+canvas_width = 700
+canvas_height = 700
+spacing = 40
+offset = 30
+canvas = tk.Canvas(window, width=canvas_width,
+                   height=canvas_height, background="#154734")
+canvas.grid(row=0, column=0, rowspan=11, columnspan=11)
 
 for x in range(11):
     for y in range(11):
         text = f"({x}, {y})"
-        label = tk.Label(text=text, foreground="darkblue")
-        label.grid(column=y, row=x)
-
-# greeting = tk.Label(text="Hello World")
-# greeting.pack()
+        # Using labels allows us to add buttons
+        button = tk.Button(text=text, foreground="white")
+        button.grid(column=y, row=x)
+        # Aligns labels with canvas dimensions
+        canvas.create_text(y*spacing + offset, x*spacing +
+                           offset)
+# Tells Python to run the event loop, blocks any code after from running until you close the window
 window.mainloop()
