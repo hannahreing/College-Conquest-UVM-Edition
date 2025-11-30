@@ -35,17 +35,35 @@ resized_cals = cals_image.resize((60, 60))
 final_cals_image = ImageTk.PhotoImage(resized_cals)
 
 # CEMS
+cems_image = Image.open("College Images/CEMS.jpeg")
+resized_cems = cems_image.resize((60, 60))
+final_cems_image = ImageTk.PhotoImage(resized_cems)
 
 # CESS
+cess_image = Image.open("College Images/CESS.jpeg")
+resized_cess = cess_image.resize((60, 60))
+final_cess_image = ImageTk.PhotoImage(resized_cess)
 
 # CNHS
+cnhs_image = Image.open("College Images/CNHS.jpeg")
+resized_cnhs = cnhs_image.resize((60, 60))
+final_cnhs_image = ImageTk.PhotoImage(resized_cnhs)
 
 # GSB
+gsb_image = Image.open("College Images/GSB.jpeg")
+resized_gsb = gsb_image.resize((60, 60))
+final_gsb_image = ImageTk.PhotoImage(resized_gsb)
+
+# RSENR
+rsenr_image = Image.open("College Images/RSENR.jpeg")
+resized_rsenr = rsenr_image.resize((60, 60))
+final_rsenr_image = ImageTk.PhotoImage(resized_rsenr)
 
 for x in range(11):
     for y in range(11):
         text = f"({x}, {y})"
-        random_image = random.choice([final_cas_image, final_cals_image])
+        random_image = random.choice(
+            [final_cas_image, final_cals_image, final_cems_image, final_cess_image, final_cnhs_image, final_gsb_image, final_rsenr_image])
         # Randomly select an image.
 
         button = tk.Button(text=text, foreground="white",
