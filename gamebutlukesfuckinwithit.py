@@ -97,19 +97,31 @@ for x in range(10):
                            offset)
         
 matches = []
-#go through each row to search for matching elements in a row
-for x in gameboard:
-    trn = None #trn stands for type right now, I'm just lazy
-    streak = 0
-    for i in x:
-        if trn != gameboard[x][y].type:
-            trn = gameboard[x][y].type
-            streak = 0 
+# Go through each row: x is the row index
+for x in range(len(gameboard)):
+    trn = None        # type right now
+    streak = 0        
+    # Go through each column: y is the column index
+    for y in range(len(gameboard[x])):
+        current_type = gameboard[x][y].type
+
+        if current_type != trn:
+            # New piece type, check if previous streak was long enough
+            if streak >= 3:
+                # Add ALL coordinates from the streak
+                for k in range(y - streak, y):
+                    matches.append((x, k))
+            # Reset streak tracking
+            trn = current_type
+            streak = 1
         else:
             streak += 1
-        
-        if streak == 3:
-            matches.append([(x,i-2),(x,i-1),(x,i)])
+    if streak >= 3:
+        for k in range(len(gameboard[x]) - streak, len(gameboard[x])):
+            matches.append((x, k))
+
+
+
 
         
 
