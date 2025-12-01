@@ -71,31 +71,32 @@ gameboard = [[0,0,0,0,0,0,0,0,0,0],
              [0,0,0,0,0,0,0,0,0,0],
              [0,0,0,0,0,0,0,0,0,0]]
 
+images = [final_cas_image, final_cals_image, final_cems_image, final_cess_image, final_cnhs_image, final_gsb_image, final_rsenr_image]
+collegedata = ["cas", "cals", 'cems', "cess", "cnhs", "gsb", "rsenr"]
 
-for x in range(10):
-    for y in range(10):
-        text = f"({x}, {y})"
-        images = [final_cas_image, final_cals_image, final_cems_image, final_cess_image, final_cnhs_image, final_gsb_image, final_rsenr_image]
-        college = random.randrange(0,6)
-        random_image = images[college]
-        collegedata = ["cas", "cals", 'cems', "cess", "cnhs", "gsb", "rsenr"]
-        # Randomly select an image.
+def drawboard():
+    for x in range(10):
+        for y in range(10):
+            text = f"({x}, {y})"
+            college = random.randrange(0,6)
+            random_image = images[college]
+            # Randomly select an image.
 
-        button = tk.Button(text=text, foreground="white",
-                           image=random_image)
-        
-        #create an attribute for each button that stores its college
-        button.type = collegedata[college]
+            button = tk.Button(text=text, foreground="white",
+                            image=random_image)
+            
+            #create an attribute for each button that stores its college
+            button.type = collegedata[college]
 
-        button.grid(column=y, row=x)
+            button.grid(column=y, row=x)
 
-        #assign each button to a space in a 2d list corresponding with the board
-        gameboard[x][y] = button
+            #assign each button to a space in a 2d list corresponding with the board
+            gameboard[x][y] = button
 
-        # Aligns labels with canvas dimensions
-        canvas.create_text(y*spacing + offset, x*spacing +
-                           offset)
-        
+            # Aligns labels with canvas dimensions
+            canvas.create_text(y*spacing + offset, x*spacing +
+                            offset)
+            
 def matchfinder(gameboard):
     def horiz_finder(gameboard):        
         matches = []
@@ -157,8 +158,9 @@ def matchfinder(gameboard):
     
     return horiz_finder(gameboard) + vertical_finder(gameboard)
 
-print(matchfinder(gameboard))       
 
+drawboard()
+print(matchfinder(gameboard))       
 
 
 
