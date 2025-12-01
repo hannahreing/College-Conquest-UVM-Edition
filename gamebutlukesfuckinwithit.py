@@ -1,0 +1,95 @@
+"""
+College Conquest UVM Edition
+Elijah Burton, Luke Price, Hannah Reing
+CS 1210 G
+"""
+
+import random
+import math
+import tkinter as tk
+from tkinter.ttk import *
+# pip installed Pillow so we can upload images as jpgs.
+from PIL import Image, ImageTk
+
+window = tk.Tk()
+window.title("College Conquest UVM Edition")
+
+# Allows dimensions of window to change.
+canvas_width = 700
+canvas_height = 700
+spacing = 40
+offset = 30
+canvas = tk.Canvas(window, width=canvas_width,
+                   height=canvas_height, background="#154734")
+canvas.grid(row=0, column=0, rowspan=11, columnspan=11)
+
+# Create all image objects.
+button_dimensions = 60
+# CAS
+cas_image = Image.open("College Images/COLLEGE ICONS/CAS.jpg")
+resized_cas = cas_image.resize((button_dimensions, button_dimensions))
+final_cas_image = ImageTk.PhotoImage(resized_cas)
+
+# CALS
+cals_image = Image.open("College Images/COLLEGE ICONS/CALS.jpg")
+resized_cals = cals_image.resize((button_dimensions, button_dimensions))
+final_cals_image = ImageTk.PhotoImage(resized_cals)
+
+# CEMS
+cems_image = Image.open("College Images/COLLEGE ICONS/CEMS.jpg")
+resized_cems = cems_image.resize((button_dimensions, button_dimensions))
+final_cems_image = ImageTk.PhotoImage(resized_cems)
+
+# CESS
+cess_image = Image.open("College Images/COLLEGE ICONS/CESS.jpg")
+resized_cess = cess_image.resize((button_dimensions, button_dimensions))
+final_cess_image = ImageTk.PhotoImage(resized_cess)
+
+# CNHS
+cnhs_image = Image.open("College Images/COLLEGE ICONS/CNHS.jpg")
+resized_cnhs = cnhs_image.resize((button_dimensions, button_dimensions))
+final_cnhs_image = ImageTk.PhotoImage(resized_cnhs)
+
+# GSB
+gsb_image = Image.open("College Images/COLLEGE ICONS/GSB.jpg")
+resized_gsb = gsb_image.resize((button_dimensions, button_dimensions))
+final_gsb_image = ImageTk.PhotoImage(resized_gsb)
+
+# RSENR
+rsenr_image = Image.open("College Images/COLLEGE ICONS/RSENR.jpg")
+resized_rsenr = rsenr_image.resize((button_dimensions, button_dimensions))
+final_rsenr_image = ImageTk.PhotoImage(resized_rsenr)
+
+gameboard = [[0,0,0,0,0,0,0,0,0,0],
+             [0,0,0,0,0,0,0,0,0,0],
+             [0,0,0,0,0,0,0,0,0,0],
+             [0,0,0,0,0,0,0,0,0,0],
+             [0,0,0,0,0,0,0,0,0,0],
+             [0,0,0,0,0,0,0,0,0,0],
+             [0,0,0,0,0,0,0,0,0,0],
+             [0,0,0,0,0,0,0,0,0,0],
+             [0,0,0,0,0,0,0,0,0,0],
+             [0,0,0,0,0,0,0,0,0,0]]
+
+
+for x in range(11):
+    for y in range(11):
+        text = f"({x}, {y})"
+        images = [final_cas_image, final_cals_image, final_cems_image, final_cess_image, final_cnhs_image, final_gsb_image, final_rsenr_image]
+        college = random.randrange(0,6)
+        random_image = images[college]
+        collegedata = ["cas", "cals", 'cems', "cess", "cnhs", "gsb", "rsenr"]
+        # Randomly select an image.
+
+        button = tk.Button(text=text, foreground="white",
+                           image=random_image)
+        button.type = collegedata[college]
+        button.grid(column=y, row=x)
+        gameboard[x][y] = button
+        # Aligns labels with canvas dimensions
+        canvas.create_text(y*spacing + offset, x*spacing +
+                           offset)
+
+
+# Tells Python to run the event loop, blocks any code after from running until you close the window
+window.mainloop()
