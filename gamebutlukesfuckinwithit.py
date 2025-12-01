@@ -96,36 +96,68 @@ for x in range(10):
         canvas.create_text(y*spacing + offset, x*spacing +
                            offset)
         
-matches = []
-# Go through each row: x is the row index
-for x in range(len(gameboard)):
-    trn = None        # type right now
-    streak = 0        
-    # Go through each column: y is the column index
-    for y in range(len(gameboard[x])):
-        current_type = gameboard[x][y].type
+def matchfinder(gameboard):
+    def horiz_finder(gameboard):        
+        matches = []
+        # Go through each row: x is the row index
+        for x in range(len(gameboard)):
+            trn = None        # type right now
+            streak = 0        
+            # Go through each column: y is the column index
+            for y in range(len(gameboard[x])):
+                current_type = gameboard[x][y].type
 
-        if current_type != trn:
-            # New piece type, check if previous streak was long enough
+                if current_type != trn:
+                    # New piece type, check if previous streak was long enough
+                    if streak >= 3:
+                        # Add ALL coordinates from the streak
+                        for k in range(y - streak, y):
+                            matches.append((x, k))
+                    # Reset streak tracking
+                    trn = current_type
+                    streak = 1
+                else:
+                    streak += 1
             if streak >= 3:
-                # Add ALL coordinates from the streak
-                for k in range(y - streak, y):
+                #Not fully understandable ngl but basically if there's still a streak at the end thats over 3 long:
+                #We add the indexes starting from when the streak starts to the end of the row
+                #(since we reached the end of the row there isnt a character that would end the streak and trigger the signaling of the streak itself)
+
+                for k in range(len(gameboard[x]) - streak, len(gameboard[x])):
                     matches.append((x, k))
-            # Reset streak tracking
-            trn = current_type
-            streak = 1
-        else:
-            streak += 1
-    if streak >= 3:
-        #not fully understandable ngl but basically if there's still a streak at the end thats over 3 long
-        #we add the indexes starting from when the streak starts to the end of the row
-        
-        for k in range(len(gameboard[x]) - streak, len(gameboard[x])):
-            matches.append((x, k))
-print(matches)
+        return matches
+    
+    def vertical_finder(gameboard):
+        matches = []
 
+        width = len(gameboard[0])     # number of columns
+        height = len(gameboard)       # number of rows
 
-        
+        for y in range(width):        # for each column
+            trn = None
+            streak = 0
+
+            for x in range(height):   # scan top → bottom
+                current_type = gameboard[x][y].type
+
+                if current_type != trn:
+                    if streak >= 3:
+                        for k in range(x - streak, x):
+                            matches.append((k, y))
+                    trn = current_type
+                    streak = 1
+                else:
+                    streak += 1
+
+            if streak >= 3:
+                for k in range(height - streak, height):
+                    matches.append((k, y))
+
+        return matches
+    
+    return horiz_finder(gameboard) + vertical_finder(gameboard)
+
+print(matchfinder(gameboard))       
 
 
 
