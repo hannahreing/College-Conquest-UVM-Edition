@@ -117,6 +117,9 @@ for x in range(len(gameboard)):
         else:
             streak += 1
     if streak >= 3:
+        #not fully understandable ngl but basically if there's still a streak at the end thats over 3 long
+        #we add the indexes starting from when the streak starts to the end of the row
+        
         for k in range(len(gameboard[x]) - streak, len(gameboard[x])):
             matches.append((x, k))
 print(matches)
