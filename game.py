@@ -8,7 +8,7 @@ import random
 import math
 import tkinter as tk
 from tkinter.ttk import *
-# pip installed Pillow so we can upload images as jpegs.
+# pip installed Pillow so we can upload images as jpgs.
 from PIL import Image, ImageTk
 
 window = tk.Tk()
@@ -24,39 +24,40 @@ canvas = tk.Canvas(window, width=canvas_width,
 canvas.grid(row=0, column=0, rowspan=11, columnspan=11)
 
 # Create all image objects.
+button_dimensions = 60
 # CAS
-cas_image = Image.open("College Images/CAS.jpeg")
-resized_cas = cas_image.resize((60, 60))
+cas_image = Image.open("College Images/COLLEGE ICONS/CAS.jpg")
+resized_cas = cas_image.resize((button_dimensions, button_dimensions))
 final_cas_image = ImageTk.PhotoImage(resized_cas)
 
 # CALS
-cals_image = Image.open("College Images/CALS.jpeg")
-resized_cals = cals_image.resize((60, 60))
+cals_image = Image.open("College Images/COLLEGE ICONS/CALS.jpg")
+resized_cals = cals_image.resize((button_dimensions, button_dimensions))
 final_cals_image = ImageTk.PhotoImage(resized_cals)
 
 # CEMS
-cems_image = Image.open("College Images/CEMS.jpeg")
-resized_cems = cems_image.resize((60, 60))
+cems_image = Image.open("College Images/COLLEGE ICONS/CEMS.jpg")
+resized_cems = cems_image.resize((button_dimensions, button_dimensions))
 final_cems_image = ImageTk.PhotoImage(resized_cems)
 
 # CESS
-cess_image = Image.open("College Images/CESS.jpeg")
-resized_cess = cess_image.resize((60, 60))
+cess_image = Image.open("College Images/COLLEGE ICONS/CESS.jpg")
+resized_cess = cess_image.resize((button_dimensions, button_dimensions))
 final_cess_image = ImageTk.PhotoImage(resized_cess)
 
 # CNHS
-cnhs_image = Image.open("College Images/CNHS.jpeg")
-resized_cnhs = cnhs_image.resize((60, 60))
+cnhs_image = Image.open("College Images/COLLEGE ICONS/CNHS.jpg")
+resized_cnhs = cnhs_image.resize((button_dimensions, button_dimensions))
 final_cnhs_image = ImageTk.PhotoImage(resized_cnhs)
 
 # GSB
-gsb_image = Image.open("College Images/GSB.jpeg")
-resized_gsb = gsb_image.resize((60, 60))
+gsb_image = Image.open("College Images/COLLEGE ICONS/GSB.jpg")
+resized_gsb = gsb_image.resize((button_dimensions, button_dimensions))
 final_gsb_image = ImageTk.PhotoImage(resized_gsb)
 
 # RSENR
-rsenr_image = Image.open("College Images/RSENR.jpeg")
-resized_rsenr = rsenr_image.resize((60, 60))
+rsenr_image = Image.open("College Images/COLLEGE ICONS/RSENR.jpg")
+resized_rsenr = rsenr_image.resize((button_dimensions, button_dimensions))
 final_rsenr_image = ImageTk.PhotoImage(resized_rsenr)
 
 for x in range(11):
