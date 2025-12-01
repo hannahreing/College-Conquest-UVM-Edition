@@ -119,8 +119,7 @@ for x in range(len(gameboard)):
     if streak >= 3:
         for k in range(len(gameboard[x]) - streak, len(gameboard[x])):
             matches.append((x, k))
-
-
+print(matches)
 
 
         
