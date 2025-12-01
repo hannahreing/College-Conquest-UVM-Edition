@@ -72,8 +72,8 @@ gameboard = [[0,0,0,0,0,0,0,0,0,0],
              [0,0,0,0,0,0,0,0,0,0]]
 
 
-for x in range(11):
-    for y in range(11):
+for x in range(10):
+    for y in range(10):
         text = f"({x}, {y})"
         images = [final_cas_image, final_cals_image, final_cems_image, final_cess_image, final_cnhs_image, final_gsb_image, final_rsenr_image]
         college = random.randrange(0,6)
@@ -83,12 +83,19 @@ for x in range(11):
 
         button = tk.Button(text=text, foreground="white",
                            image=random_image)
+        
+        #create an attribute for each button that stores its college
         button.type = collegedata[college]
+
         button.grid(column=y, row=x)
+
+        #assign each button to a space in a 2d list corresponding with the board
         gameboard[x][y] = button
+        
         # Aligns labels with canvas dimensions
         canvas.create_text(y*spacing + offset, x*spacing +
                            offset)
+        
 
 
 # Tells Python to run the event loop, blocks any code after from running until you close the window
