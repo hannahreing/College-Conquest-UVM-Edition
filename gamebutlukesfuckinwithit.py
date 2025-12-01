@@ -91,11 +91,29 @@ for x in range(10):
 
         #assign each button to a space in a 2d list corresponding with the board
         gameboard[x][y] = button
-        
+
         # Aligns labels with canvas dimensions
         canvas.create_text(y*spacing + offset, x*spacing +
                            offset)
         
+matches = []
+#go through each row to search for matching elements in a row
+for x in gameboard:
+    trn = None #trn stands for type right now, I'm just lazy
+    streak = 0
+    for i in x:
+        if trn != gameboard[x][y].type:
+            trn = gameboard[x][y].type
+            streak = 0 
+        else:
+            streak += 1
+        
+        if streak == 3:
+            matches.append([(x,i-2),(x,i-1),(x,i)])
+
+        
+
+
 
 
 # Tells Python to run the event loop, blocks any code after from running until you close the window
