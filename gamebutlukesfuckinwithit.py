@@ -8,7 +8,7 @@ import random
 import math
 import tkinter as tk
 from tkinter.ttk import *
-# pip installed Pillow so we can upload images as jpgs.
+# Pip installed Pillow so we can upload images as jpgs.
 from PIL import Image, ImageTk
 
 window = tk.Tk()
@@ -60,40 +60,43 @@ rsenr_image = Image.open("College Images/COLLEGE ICONS/RSENR.jpg")
 resized_rsenr = rsenr_image.resize((button_dimensions, button_dimensions))
 final_rsenr_image = ImageTk.PhotoImage(resized_rsenr)
 
-gameboard = [[0,0,0,0,0,0,0,0,0,0],
-             [0,0,0,0,0,0,0,0,0,0],
-             [0,0,0,0,0,0,0,0,0,0],
-             [0,0,0,0,0,0,0,0,0,0],
-             [0,0,0,0,0,0,0,0,0,0],
-             [0,0,0,0,0,0,0,0,0,0],
-             [0,0,0,0,0,0,0,0,0,0],
-             [0,0,0,0,0,0,0,0,0,0],
-             [0,0,0,0,0,0,0,0,0,0],
-             [0,0,0,0,0,0,0,0,0,0]]
+gameboard = [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
 
-images = [final_cas_image, final_cals_image, final_cems_image, final_cess_image, final_cnhs_image, final_gsb_image, final_rsenr_image]
+images = [final_cas_image, final_cals_image, final_cems_image,
+          final_cess_image, final_cnhs_image, final_gsb_image, final_rsenr_image]
 collegedata = ["cas", "cals", 'cems', "cess", "cnhs", "gsb", "rsenr"]
 
-def buildbutton(x,y):
+
+def buildbutton(x, y):
     text = f"({x}, {y})"
-    college = random.randrange(0,6)
+    college = random.randrange(0, 6)
     random_image = images[college]
     # Randomly select an image.
 
     button = tk.Button(text=text, foreground="white",
-                    image=random_image)
-    
-    #create an attribute for each button that stores its college
+                       image=random_image)
+
+    # create an attribute for each button that stores its college
     button.type = collegedata[college]
 
     button.grid(column=y, row=x)
 
-    #assign each button to a space in a 2d list corresponding with the board
+    # assign each button to a space in a 2d list corresponding with the board
     gameboard[x][y] = button
 
     # Aligns labels with canvas dimensions
     canvas.create_text(y*spacing + offset, x*spacing +
-                    offset)
+                       offset)
+
 
 def matchremover(m):
     # Ensure every row is exactly 10 columns
@@ -102,7 +105,7 @@ def matchremover(m):
             gameboard[r].append(None)
         while len(gameboard[r]) > 10:
             gameboard[r].pop()
-    #unduplicate the coordinates to remove
+    # unduplicate the coordinates to remove
     coords = set()
     for group in m:
         for (row, col) in group:
@@ -115,13 +118,14 @@ def matchremover(m):
                 try:
                     btn.destroy()
                 except Exception:
-                    #if button is thanos give up
+                    # if button is thanos give up
                     pass
             gameboard[r][c] = None
 
-    #collapsing the column and filling in the top
+    # collapsing the column and filling in the top
     for c in range(10):
-        write_row = 9  # where the next existing tile should fall to (bottom-up)
+        # where the next existing tile should fall to (bottom-up)
+        write_row = 9
         # move existing tiles down
         for r in range(9, -1, -1):
             if gameboard[r][c] != None:
@@ -133,19 +137,20 @@ def matchremover(m):
                     gameboard[r][c].grid(row=r, column=c)
                 write_row -= 1
 
-        #rebuttonify that mofo
+        # rebuttonify that mofo
         for r in range(write_row, -1, -1):
             if r < 0:
                 break
             buildbutton(r, c)
 
+
 def matchfinder(gameboard):
-    def horiz_finder(gameboard):        
+    def horiz_finder(gameboard):
         matches = []
         # Go through each row: x is the row index
         for x in range(len(gameboard)):
             trn = None        # type right now
-            streak = 0        
+            streak = 0
             # Go through each column: y is the column index
             for y in range(len(gameboard[x])):
                 current_type = gameboard[x][y].type
@@ -154,7 +159,7 @@ def matchfinder(gameboard):
                     # New piece type, check if previous streak was long enough
                     if streak >= 3:
                         # Add ALL coordinates from the streak
-                        smollist=[]
+                        smollist = []
                         for k in range(y - streak, y):
                             smollist.append((x, k))
                         matches.append(smollist)
@@ -164,15 +169,15 @@ def matchfinder(gameboard):
                 else:
                     streak += 1
             if streak >= 3:
-                #Not fully understandable ngl but basically if there's still a streak at the end thats over 3 long:
-                #We add the indexes starting from when the streak starts to the end of the row
-                #(since we reached the end of the row there isnt a character that would end the streak and trigger the signaling of the streak itself)
-                smollist=[]
+                # Not fully understandable ngl but basically if there's still a streak at the end thats over 3 long:
+                # We add the indexes starting from when the streak starts to the end of the row
+                # (since we reached the end of the row there isnt a character that would end the streak and trigger the signaling of the streak itself)
+                smollist = []
                 for k in range(len(gameboard[x]) - streak, len(gameboard[x])):
                     smollist.append((x, k))
                 matches.append(smollist)
         return matches
-    
+
     def vertical_finder(gameboard):
         matches = []
 
@@ -188,7 +193,7 @@ def matchfinder(gameboard):
 
                 if current_type != trn:
                     if streak >= 3:
-                        smollist=[]
+                        smollist = []
                         for k in range(x - streak, x):
                             smollist.append((k, y))
                         matches.append(smollist)
@@ -198,38 +203,26 @@ def matchfinder(gameboard):
                     streak += 1
 
             if streak >= 3:
-                smollist=[]
+                smollist = []
                 for k in range(height - streak, height):
                     smollist.append((k, y))
                 matches.append(smollist)
 
         return matches
-    
+
     return horiz_finder(gameboard) + vertical_finder(gameboard)
+
 
 def init_board(gameboard):
     for x in range(10):
         for y in range(10):
-            buildbutton(x,y)
+            buildbutton(x, y)
     while matchfinder(gameboard):
         matchremover(matchfinder(gameboard))
 
 
-
-
-
-
-
-
-
-
-
-
-init_board() 
-print(matchfinder(gameboard))  
-
-
-
+init_board(gameboard)
+print(matchfinder(gameboard))
 
 
 # Tells Python to run the event loop, blocks any code after from running until you close the window
