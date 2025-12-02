@@ -219,8 +219,9 @@ def init_board(gameboard):
     while matchfinder(gameboard):
         matchremover(matchfinder(gameboard))
 
-init_board(gameboard)
-print(matchfinder(gameboard))  
+if __name__ == "__main__":
+    init_board(gameboard)
+    print(matchfinder(gameboard))  
 
 # Tells Python to run the event loop, blocks any code after from running until you close the window
 window.mainloop()
