@@ -169,7 +169,6 @@ def matchfinder(gameboard):
     
     return horiz_finder(gameboard) + vertical_finder(gameboard)
 
-
 def matchremover(m):
     # Ensure every row is exactly 10 columns
     for r in range(10):
@@ -220,13 +219,8 @@ def init_board(gameboard):
     while matchfinder(gameboard):
         matchremover(matchfinder(gameboard))
 
-
 init_board(gameboard)
 print(matchfinder(gameboard))  
-
-
-
-
 
 # Tells Python to run the event loop, blocks any code after from running until you close the window
 window.mainloop()
