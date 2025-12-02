@@ -2,6 +2,7 @@
 College Conquest UVM Edition
 Elijah Burton, Luke Price, Hannah Reing
 CS 1210 G
+Hopefully the Gods of the mormon turtle church favor us
 """
 
 import random
@@ -92,7 +93,7 @@ def buildbutton(x,y):
     gameboard[x][y] = button
 
     # Aligns labels with canvas dimensions
-    canvas.create_text(y*spacing + offset, x*spacing +
+    canvas.create_text(y * spacing + offset, x * spacing +
                     offset)
 
 def drawboard():
@@ -115,7 +116,7 @@ def matchfinder(gameboard):
                     # New piece type, check if previous streak was long enough
                     if streak >= 3:
                         # Add ALL coordinates from the streak
-                        smollist=[]
+                        smollist = []
                         for k in range(y - streak, y):
                             smollist.append((x, k))
                         matches.append(smollist)
@@ -128,7 +129,7 @@ def matchfinder(gameboard):
                 #Not fully understandable ngl but basically if there's still a streak at the end thats over 3 long:
                 #We add the indexes starting from when the streak starts to the end of the row
                 #(since we reached the end of the row there isnt a character that would end the streak and trigger the signaling of the streak itself)
-                smollist=[]
+                smollist = []
                 for k in range(len(gameboard[x]) - streak, len(gameboard[x])):
                     smollist.append((x, k))
                 matches.append(smollist)
@@ -149,7 +150,7 @@ def matchfinder(gameboard):
 
                 if current_type != trn:
                     if streak >= 3:
-                        smollist=[]
+                        smollist = []
                         for k in range(x - streak, x):
                             smollist.append((k, y))
                         matches.append(smollist)
@@ -159,7 +160,7 @@ def matchfinder(gameboard):
                     streak += 1
 
             if streak >= 3:
-                smollist=[]
+                smollist = []
                 for k in range(height - streak, height):
                     smollist.append((k, y))
                 matches.append(smollist)
@@ -218,8 +219,6 @@ def init_board(gameboard):
     print(matchfinder(gameboard))
     while matchfinder(gameboard):
         matchremover(matchfinder(gameboard))
-
-
 
 
 init_board(gameboard)
