@@ -144,7 +144,7 @@ def matchfinder(gameboard):
             trn = None
             streak = 0
 
-            for x in range(height):   # scan top → bottom
+            for x in range(height):   # scan top -> bottom
                 current_type = gameboard[x][y].type
 
                 if current_type != trn:
@@ -172,6 +172,18 @@ def matchfinder(gameboard):
 drawboard()
 print(matchfinder(gameboard))       
 
+def matchremover(m):
+    for i in m:
+        #I think this checks if it's a horizontal match
+            if i[0][0] == i[1][0]:
+                for l in i:
+                    gameboard[l[0]].pop(l[1])
+                    if l[0] != 0:  
+                        c = 0
+                        for h in range(l[0]):
+                            gameboard[l[0] + c][l[1]] = gameboard[l[0] + (c+1)][l[1]]
+                            c += 1
+                        buildbutton(l[1],0)
 
 
 # Tells Python to run the event loop, blocks any code after from running until you close the window
