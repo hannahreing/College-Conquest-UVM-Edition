@@ -74,28 +74,31 @@ gameboard = [[0,0,0,0,0,0,0,0,0,0],
 images = [final_cas_image, final_cals_image, final_cems_image, final_cess_image, final_cnhs_image, final_gsb_image, final_rsenr_image]
 collegedata = ["cas", "cals", 'cems', "cess", "cnhs", "gsb", "rsenr"]
 
+def buildbutton(x,y):
+    text = f"({x}, {y})"
+    college = random.randrange(0,6)
+    random_image = images[college]
+    # Randomly select an image.
+
+    button = tk.Button(text=text, foreground="white",
+                    image=random_image)
+    
+    #create an attribute for each button that stores its college
+    button.type = collegedata[college]
+
+    button.grid(column=y, row=x)
+
+    #assign each button to a space in a 2d list corresponding with the board
+    gameboard[x][y] = button
+
+    # Aligns labels with canvas dimensions
+    canvas.create_text(y*spacing + offset, x*spacing +
+                    offset)
+
 def drawboard():
     for x in range(10):
         for y in range(10):
-            text = f"({x}, {y})"
-            college = random.randrange(0,6)
-            random_image = images[college]
-            # Randomly select an image.
-
-            button = tk.Button(text=text, foreground="white",
-                            image=random_image)
-            
-            #create an attribute for each button that stores its college
-            button.type = collegedata[college]
-
-            button.grid(column=y, row=x)
-
-            #assign each button to a space in a 2d list corresponding with the board
-            gameboard[x][y] = button
-
-            # Aligns labels with canvas dimensions
-            canvas.create_text(y*spacing + offset, x*spacing +
-                            offset)
+            buildbutton(x,y)
             
 def matchfinder(gameboard):
     def horiz_finder(gameboard):        
@@ -112,8 +115,10 @@ def matchfinder(gameboard):
                     # New piece type, check if previous streak was long enough
                     if streak >= 3:
                         # Add ALL coordinates from the streak
+                        smollist=[]
                         for k in range(y - streak, y):
-                            matches.append((x, k))
+                            smollist.append((x, k))
+                        matches.append(smollist)
                     # Reset streak tracking
                     trn = current_type
                     streak = 1
@@ -123,9 +128,10 @@ def matchfinder(gameboard):
                 #Not fully understandable ngl but basically if there's still a streak at the end thats over 3 long:
                 #We add the indexes starting from when the streak starts to the end of the row
                 #(since we reached the end of the row there isnt a character that would end the streak and trigger the signaling of the streak itself)
-
+                smollist=[]
                 for k in range(len(gameboard[x]) - streak, len(gameboard[x])):
-                    matches.append((x, k))
+                    smollist.append((x, k))
+                matches.append(smollist)
         return matches
     
     def vertical_finder(gameboard):
@@ -143,16 +149,20 @@ def matchfinder(gameboard):
 
                 if current_type != trn:
                     if streak >= 3:
+                        smollist=[]
                         for k in range(x - streak, x):
-                            matches.append((k, y))
+                            smollist.append((k, y))
+                        matches.append(smollist)
                     trn = current_type
                     streak = 1
                 else:
                     streak += 1
 
             if streak >= 3:
+                smollist=[]
                 for k in range(height - streak, height):
-                    matches.append((k, y))
+                    smollist.append((k, y))
+                matches.append(smollist)
 
         return matches
     
