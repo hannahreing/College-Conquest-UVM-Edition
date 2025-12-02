@@ -222,7 +222,5 @@ def init_board(gameboard):
 init_board(gameboard)
 print(matchfinder(gameboard))  
 
-#test to practice commits and pushes with vscode
-
 # Tells Python to run the event loop, blocks any code after from running until you close the window
 window.mainloop()
