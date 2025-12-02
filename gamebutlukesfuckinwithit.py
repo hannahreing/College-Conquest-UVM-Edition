@@ -213,16 +213,18 @@ def matchremover(m):
                 break
             buildbutton(r, c)
 
+def init_board(gameboard):
+    drawboard()
+    print(matchfinder(gameboard))
+    while matchfinder(gameboard):
+        matchremover(matchfinder(gameboard))
 
 
 
 
-
-
-drawboard() 
+init_board(gameboard)
 print(matchfinder(gameboard))  
-while matchfinder(gameboard):
-    matchremover(matchfinder(gameboard))
+
 
 
 
