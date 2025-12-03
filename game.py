@@ -99,13 +99,17 @@ def buildbutton(x, y):
     canvas.create_text(y * spacing + offset, x * spacing +
                        offset)
 
+    return button
+
 # Builds button for each coordinate pair on board.
 
 
 def drawboard():
     for x in range(10):
         for y in range(10):
-            buildbutton(x, y)
+            if gameboard[x][y] is None:
+                buildbutton(x, y)
+
 
 # horiz_finder scans across columns for each row, vertical_finder scans across rows for each column
 
@@ -195,12 +199,7 @@ def matchfinder(gameboard):
 
 
 def matchremover(m):
-    # Ensure every row is exactly 10 columns
-    for r in range(10):
-        while len(gameboard[r]) < 10:
-            gameboard[r].append(None)
-        while len(gameboard[r]) > 10:
-            gameboard[r].pop()
+
     # Unduplicate the coordinates to remove
     coords = set()
     for group in m:
@@ -210,7 +209,7 @@ def matchremover(m):
     for (r, c) in coords:
         if 0 <= r < 10 and 0 <= c < 10:
             btn = gameboard[r][c]
-            if btn != None:
+            if btn is not None:
                 try:
                     btn.destroy()
                 except Exception:
@@ -218,22 +217,25 @@ def matchremover(m):
                     pass
             gameboard[r][c] = None
 
-    # collapsing the column and filling in the top
+    # Collapsing the column and filling in the top
     for c in range(10):
         # where the next existing tile should fall to (bottom-up)
         write_row = 9
         # move existing tiles down
         for r in range(9, -1, -1):
-            if gameboard[r][c] != None:
+            if gameboard[r][c] is not None:
+                btn = gameboard[r][c]
                 if r != write_row:
-                    gameboard[write_row][c] = gameboard[r][c]
-                    gameboard[write_row][c].grid(row=write_row, column=c)
+                    gameboard[write_row][c] = btn
+                    btn.grid(row=write_row, column=c)
+
+                    # Clears old position
                     gameboard[r][c] = None
                 else:
-                    gameboard[r][c].grid(row=r, column=c)
+                    btn.grid(row=r, column=c)
                 write_row -= 1
 
-        # rebuttonify that mofo
+        # Create new buttons at the top
         for r in range(write_row, -1, -1):
             if r < 0:
                 break
