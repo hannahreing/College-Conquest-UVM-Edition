@@ -217,21 +217,25 @@ def matchremover(m):
                     pass
             gameboard[r][c] = None
 
-    # Collapsing the column and filling in the top
+    # For each column
     for c in range(10):
-        # where the next existing tile should fall to (bottom-up)
+        # Where the next existing tile should fall to (bottom-up)
         write_row = 9
-        # move existing tiles down
+        # Scanning up the column
         for r in range(9, -1, -1):
+
             if gameboard[r][c] is not None:
                 btn = gameboard[r][c]
+                # If button needs to be moved down
                 if r != write_row:
+                    # Move to lower place
                     gameboard[write_row][c] = btn
+                    # Update on screen
                     btn.grid(row=write_row, column=c)
-
                     # Clears old position
                     gameboard[r][c] = None
                 else:
+                    # Already in correct position
                     btn.grid(row=r, column=c)
                 write_row -= 1
 
