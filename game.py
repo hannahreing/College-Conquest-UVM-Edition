@@ -13,16 +13,16 @@ from tkinter.ttk import *
 from PIL import Image, ImageTk
 
 window = tk.Tk()
-window.title("College Conquest UVM Edition")
+window.title("Match 3: Graduate for Free!")
 
 # Allows dimensions of window to change.
 canvas_width = 700
 canvas_height = 700
-spacing = 40
-offset = 30
+spacing = 45
+offset = 60
 canvas = tk.Canvas(window, width=canvas_width,
                    height=canvas_height, background="#154734")
-canvas.grid(row=0, column=0, rowspan=11, columnspan=11)
+canvas.grid(row=0, column=0, rowspan=10, columnspan=10)
 
 # Create all image objects.
 button_dimensions = 60
@@ -78,25 +78,28 @@ collegedata = ["cas", "cals", 'cems', "cess", "cnhs", "gsb", "rsenr"]
 
 
 def buildbutton(x, y):
-    text = f"({x}, {y})"
-    college = random.randrange(0, 6)
-    random_image = images[college]
-    # Randomly select an image.
+    # Randomly selects an image using random generation of a number 0-6.
+    index_college = random.randrange(0, 6)
+    random_image = images[index_college]
 
-    button = tk.Button(text=text, foreground="white",
+    button = tk.Button(foreground="white",
                        image=random_image)
 
-    # create an attribute for each button that stores its college
-    button.type = collegedata[college]
+    # Creates an attribute for each button that stores its college.
+    button.type = collegedata[index_college]
 
-    button.grid(column=y, row=x)
+    # Positions buttons in a grid layout.
+    button.grid(row=x, column=y)
 
-    # assign each button to a space in a 2d list corresponding with the board
-    gameboard[x][y] = button
+    # Assigns each button to a space in a 2d list "gameboard" corresponding with the board.
+    # For example, gameboard[1][2] gives button in second row, third column (Python is zero indexed).
+    button = gameboard[x][y]
 
-    # Aligns labels with canvas dimensions
+    # Aligns labels with canvas dimensions.
     canvas.create_text(y * spacing + offset, x * spacing +
                        offset)
+
+# Builds button for each coordinate pair on board.
 
 
 def drawboard():
@@ -104,73 +107,83 @@ def drawboard():
         for y in range(10):
             buildbutton(x, y)
 
+# horiz_finder scans across columns for each row, vertical_finder scans across rows for each column
+
 
 def matchfinder(gameboard):
     def horiz_finder(gameboard):
         matches = []
-        # Go through each row: x is the row index
+        # For each row.
         for x in range(len(gameboard)):
-            trn = None        # type right now
+            current_type = None
             streak = 0
-            # Go through each column: y is the column index
+            # Go through each column in this row.
             for y in range(len(gameboard[x])):
-                current_type = gameboard[x][y].type
+                # Get piece type at (x,y)
+                new_type = gameboard[x][y].type
 
-                if current_type != trn:
-                    # New piece type, check if previous streak was long enough
+                if new_type != current_type:
+                    # Check if previous streak was long enough.
                     if streak >= 3:
-                        # Add ALL coordinates from the streak
-                        smollist = []
+                        # Save coordinates from start of streak to current - 1.
+                        # For example, if y = 3 and streak = 3, then range is [0, 1, 2],
+                        # so (x, 0), (x, 1), (x, 2) get added to matches in a smaller list.
+                        small_list = []
                         for k in range(y - streak, y):
-                            smollist.append((x, k))
-                        matches.append(smollist)
+                            small_list.append((x, k))
+                        matches.append(small_list)
                     # Reset streak tracking
-                    trn = current_type
+                    current_type = new_type
                     streak = 1
                 else:
                     streak += 1
+            # Catches the edge cases when a streak reaches the end of a row
+            # because there is no current_type = new_type to save it.
             if streak >= 3:
-                # Not fully understandable ngl but basically if there's still a streak at the end thats over 3 long:
-                # We add the indexes starting from when the streak starts to the end of the row
-                # (since we reached the end of the row there isnt a character that would end the streak and trigger the signaling of the streak itself)
-                smollist = []
+                small_list = []
                 for k in range(len(gameboard[x]) - streak, len(gameboard[x])):
-                    smollist.append((x, k))
-                matches.append(smollist)
+                    small_list.append((x, k))
+                matches.append(small_list)
+        # Returns a list of lists of tuples (inside lists are coordinates with same images)
         return matches
 
     def vertical_finder(gameboard):
         matches = []
 
-        width = len(gameboard[0])     # number of columns
-        height = len(gameboard)       # number of rows
+        # Number of columns
+        width = len(gameboard[0])
 
-        for y in range(width):        # for each column
-            trn = None
+        # Number of rows
+        height = len(gameboard)
+
+        # For each column
+        for y in range(width):
+            current_type = None
             streak = 0
 
-            for x in range(height):   # scan top -> bottom
-                current_type = gameboard[x][y].type
+            # For each column, scan down rows.
+            for x in range(height):
+                new_type = gameboard[x][y].type
 
-                if current_type != trn:
+                if new_type != current_type:
                     if streak >= 3:
-                        smollist = []
+                        small_list = []
                         for k in range(x - streak, x):
-                            smollist.append((k, y))
-                        matches.append(smollist)
-                    trn = current_type
+                            small_list.append((k, y))
+                        matches.append(small_list)
+                    current_type = new_type
                     streak = 1
                 else:
                     streak += 1
 
             if streak >= 3:
-                smollist = []
+                small_list = []
                 for k in range(height - streak, height):
-                    smollist.append((k, y))
-                matches.append(smollist)
+                    small_list.append((k, y))
+                matches.append(small_list)
 
         return matches
-
+    # Returns total matches
     return horiz_finder(gameboard) + vertical_finder(gameboard)
 
 
@@ -181,7 +194,7 @@ def matchremover(m):
             gameboard[r].append(None)
         while len(gameboard[r]) > 10:
             gameboard[r].pop()
-    # unduplicate the coordinates to remove
+    # Unduplicate the coordinates to remove
     coords = set()
     for group in m:
         for (row, col) in group:
@@ -231,5 +244,5 @@ if __name__ == "__main__":
     init_board(gameboard)
     print(matchfinder(gameboard))
 
-# Tells Python to run the event loop, blocks any code after from running until you close the window ok
+# Tells Python to run the event loop, blocks any code after from running until you close the window
 window.mainloop()
