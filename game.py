@@ -2,6 +2,7 @@
 College Conquest UVM Edition
 Elijah Burton, Luke Price, Hannah Reing
 CS 1210 G
+Hopefully the Gods of the mormon turtle church favor us
 """
 
 import random
@@ -60,20 +61,175 @@ rsenr_image = Image.open("College Images/COLLEGE ICONS/RSENR.jpg")
 resized_rsenr = rsenr_image.resize((button_dimensions, button_dimensions))
 final_rsenr_image = ImageTk.PhotoImage(resized_rsenr)
 
-for x in range(11):
-    for y in range(11):
-        text = f"({x}, {y})"
-        random_image = random.choice(
-            [final_cas_image, final_cals_image, final_cems_image, final_cess_image, final_cnhs_image, final_gsb_image, final_rsenr_image])
-        # Randomly select an image.
+gameboard = [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
 
-        button = tk.Button(text=text, foreground="white",
-                           image=random_image)
-        button.grid(column=y, row=x)
-        # Aligns labels with canvas dimensions
-        canvas.create_text(y*spacing + offset, x*spacing +
-                           offset)
+images = [final_cas_image, final_cals_image, final_cems_image,
+          final_cess_image, final_cnhs_image, final_gsb_image, final_rsenr_image]
+collegedata = ["cas", "cals", 'cems', "cess", "cnhs", "gsb", "rsenr"]
 
 
-# Tells Python to run the event loop, blocks any code after from running until you close the window
+def buildbutton(x, y):
+    text = f"({x}, {y})"
+    college = random.randrange(0, 6)
+    random_image = images[college]
+    # Randomly select an image.
+
+    button = tk.Button(text=text, foreground="white",
+                       image=random_image)
+
+    # create an attribute for each button that stores its college
+    button.type = collegedata[college]
+
+    button.grid(column=y, row=x)
+
+    # assign each button to a space in a 2d list corresponding with the board
+    gameboard[x][y] = button
+
+    # Aligns labels with canvas dimensions
+    canvas.create_text(y * spacing + offset, x * spacing +
+                       offset)
+
+
+def drawboard():
+    for x in range(10):
+        for y in range(10):
+            buildbutton(x, y)
+
+
+def matchfinder(gameboard):
+    def horiz_finder(gameboard):
+        matches = []
+        # Go through each row: x is the row index
+        for x in range(len(gameboard)):
+            trn = None        # type right now
+            streak = 0
+            # Go through each column: y is the column index
+            for y in range(len(gameboard[x])):
+                current_type = gameboard[x][y].type
+
+                if current_type != trn:
+                    # New piece type, check if previous streak was long enough
+                    if streak >= 3:
+                        # Add ALL coordinates from the streak
+                        smollist = []
+                        for k in range(y - streak, y):
+                            smollist.append((x, k))
+                        matches.append(smollist)
+                    # Reset streak tracking
+                    trn = current_type
+                    streak = 1
+                else:
+                    streak += 1
+            if streak >= 3:
+                # Not fully understandable ngl but basically if there's still a streak at the end thats over 3 long:
+                # We add the indexes starting from when the streak starts to the end of the row
+                # (since we reached the end of the row there isnt a character that would end the streak and trigger the signaling of the streak itself)
+                smollist = []
+                for k in range(len(gameboard[x]) - streak, len(gameboard[x])):
+                    smollist.append((x, k))
+                matches.append(smollist)
+        return matches
+
+    def vertical_finder(gameboard):
+        matches = []
+
+        width = len(gameboard[0])     # number of columns
+        height = len(gameboard)       # number of rows
+
+        for y in range(width):        # for each column
+            trn = None
+            streak = 0
+
+            for x in range(height):   # scan top -> bottom
+                current_type = gameboard[x][y].type
+
+                if current_type != trn:
+                    if streak >= 3:
+                        smollist = []
+                        for k in range(x - streak, x):
+                            smollist.append((k, y))
+                        matches.append(smollist)
+                    trn = current_type
+                    streak = 1
+                else:
+                    streak += 1
+
+            if streak >= 3:
+                smollist = []
+                for k in range(height - streak, height):
+                    smollist.append((k, y))
+                matches.append(smollist)
+
+        return matches
+
+    return horiz_finder(gameboard) + vertical_finder(gameboard)
+
+
+def matchremover(m):
+    # Ensure every row is exactly 10 columns
+    for r in range(10):
+        while len(gameboard[r]) < 10:
+            gameboard[r].append(None)
+        while len(gameboard[r]) > 10:
+            gameboard[r].pop()
+    # unduplicate the coordinates to remove
+    coords = set()
+    for group in m:
+        for (row, col) in group:
+            coords.add((row, col))
+    # Destroy matched buttons and mark those spots None
+    for (r, c) in coords:
+        if 0 <= r < 10 and 0 <= c < 10:
+            btn = gameboard[r][c]
+            if btn != None:
+                try:
+                    btn.destroy()
+                except Exception:
+                    # if button is thanos give up
+                    pass
+            gameboard[r][c] = None
+
+    # collapsing the column and filling in the top
+    for c in range(10):
+        # where the next existing tile should fall to (bottom-up)
+        write_row = 9
+        # move existing tiles down
+        for r in range(9, -1, -1):
+            if gameboard[r][c] != None:
+                if r != write_row:
+                    gameboard[write_row][c] = gameboard[r][c]
+                    gameboard[write_row][c].grid(row=write_row, column=c)
+                    gameboard[r][c] = None
+                else:
+                    gameboard[r][c].grid(row=r, column=c)
+                write_row -= 1
+
+        # rebuttonify that mofo
+        for r in range(write_row, -1, -1):
+            if r < 0:
+                break
+            buildbutton(r, c)
+
+
+def init_board(gameboard):
+    drawboard()
+    print(matchfinder(gameboard))
+    while matchfinder(gameboard):
+        matchremover(matchfinder(gameboard))
+
+
+if __name__ == "__main__":
+    init_board(gameboard)
+    print(matchfinder(gameboard))
+
+# Tells Python to run the event loop, blocks any code after from running until you close the window ok
 window.mainloop()
