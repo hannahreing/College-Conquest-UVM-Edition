@@ -83,7 +83,7 @@ def buildbutton(x, y):
     random_image = images[index_college]
 
     button = tk.Button(foreground="white",
-                       image=random_image)
+                       image=random_image, command=lambda x=x, y=y: button_click_handler(x, y))
 
     # Creates an attribute for each button that stores its college.
     button.type = collegedata[index_college]
@@ -232,6 +232,7 @@ def matchremover(m):
                     gameboard[write_row][c] = btn
                     # Update on screen
                     btn.grid(row=write_row, column=c)
+
                     # Clears old position
                     gameboard[r][c] = None
                 else:
@@ -251,6 +252,9 @@ def init_board(gameboard):
     print(matchfinder(gameboard))
     while matchfinder(gameboard):
         matchremover(matchfinder(gameboard))
+
+
+def button_click_handler(row, col):
 
 
 if __name__ == "__main__":
