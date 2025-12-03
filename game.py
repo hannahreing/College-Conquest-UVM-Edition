@@ -61,16 +61,16 @@ rsenr_image = Image.open("College Images/COLLEGE ICONS/RSENR.jpg")
 resized_rsenr = rsenr_image.resize((button_dimensions, button_dimensions))
 final_rsenr_image = ImageTk.PhotoImage(resized_rsenr)
 
-gameboard = [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
+gameboard = [[None, None, None, None, None, None, None, None, None, None],
+             [None, None, None, None, None, None, None, None, None, None],
+             [None, None, None, None, None, None, None, None, None, None],
+             [None, None, None, None, None, None, None, None, None, None],
+             [None, None, None, None, None, None, None, None, None, None],
+             [None, None, None, None, None, None, None, None, None, None],
+             [None, None, None, None, None, None, None, None, None, None],
+             [None, None, None, None, None, None, None, None, None, None],
+             [None, None, None, None, None, None, None, None, None, None],
+             [None, None, None, None, None, None, None, None, None, None]]
 
 images = [final_cas_image, final_cals_image, final_cems_image,
           final_cess_image, final_cnhs_image, final_gsb_image, final_rsenr_image]
@@ -79,7 +79,7 @@ collegedata = ["cas", "cals", 'cems', "cess", "cnhs", "gsb", "rsenr"]
 
 def buildbutton(x, y):
     # Randomly selects an image using random generation of a number 0-6.
-    index_college = random.randrange(0, 6)
+    index_college = random.randrange(0, 7)
     random_image = images[index_college]
 
     button = tk.Button(foreground="white",
@@ -93,7 +93,7 @@ def buildbutton(x, y):
 
     # Assigns each button to a space in a 2d list "gameboard" corresponding with the board.
     # For example, gameboard[1][2] gives button in second row, third column (Python is zero indexed).
-    button = gameboard[x][y]
+    gameboard[x][y] = button
 
     # Aligns labels with canvas dimensions.
     canvas.create_text(y * spacing + offset, x * spacing +
@@ -111,16 +111,20 @@ def drawboard():
 
 
 def matchfinder(gameboard):
+
     def horiz_finder(gameboard):
         matches = []
         # For each row.
         for x in range(len(gameboard)):
             current_type = None
             streak = 0
-            # Go through each column in this row.
+            # For each column in this row.
             for y in range(len(gameboard[x])):
                 # Get piece type at (x,y)
-                new_type = gameboard[x][y].type
+                if gameboard[x][y] is None:
+                    new_type = None
+                else:
+                    new_type = gameboard[x][y].type
 
                 if new_type != current_type:
                     # Check if previous streak was long enough.
@@ -163,7 +167,10 @@ def matchfinder(gameboard):
 
             # For each column, scan down rows.
             for x in range(height):
-                new_type = gameboard[x][y].type
+                if gameboard[x][y] is None:
+                    new_type = None
+                else:
+                    new_type = gameboard[x][y].type
 
                 if new_type != current_type:
                     if streak >= 3:
