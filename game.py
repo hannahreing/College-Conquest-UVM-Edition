@@ -76,6 +76,8 @@ images = [final_cas_image, final_cals_image, final_cems_image,
           final_cess_image, final_cnhs_image, final_gsb_image, final_rsenr_image]
 collegedata = ["cas", "cals", 'cems', "cess", "cnhs", "gsb", "rsenr"]
 
+selected = None
+
 
 def buildbutton(x, y):
     # Randomly selects an image using random generation of a number 0-6.
@@ -255,11 +257,51 @@ def init_board(gameboard):
 
 
 def button_click_handler(row, col):
+    # If no button has been selected yet, store this position
+    if selected is None:
+        selected = (row, col)
+        highlight_button(row, col)
+    else:
+        old_row, old_col = selected
+        new_row, new_col = row, col
+
+        if adjacent(old_row, old_col, new_row, new_col):
+            try_swap(old_row, old_col, new_row, new_col)
+        else:
+            selected = None
+            unhighlight_button(old_row, old_col)
+
+
+def highlight_button(row, col):
+    btn = gameboard[row][col]
+    if btn:
+        btn.config(bg="yellow", relief="sunken", borderwidth=4)
+
+
+def unhighlight_button(row, col):
+    btn = gameboard[row][col]
+    if btn:
+        btn.config(bg="SystemButtonFace", relief="raised", borderwidth=2)
+
+
+def adjacent(r1, c1, r2, c2):
+    if r1 == r2 and abs(c1 - c2) == 1:
+        return True
+    if c1 == c2 and abs(r1-r2) == 1:
+        return True
+    else:
+        return False
+
+
+def try_swap(r1, r2, c1, c2):
+    # TODO: Implement swap logic here
+    pass
 
 
 if __name__ == "__main__":
     init_board(gameboard)
     print(matchfinder(gameboard))
+    button_click_handler()
 
 # Tells Python to run the event loop, blocks any code after from running until you close the window
 window.mainloop()
