@@ -27,7 +27,7 @@ canvas.grid(row=0, column=0, rowspan=10, columnspan=10)
 # Create all image objects.
 button_dimensions = 60
 # CAS
-cas_image = Image.open("College Images/COLLEGE ICONS/CAS.jpg")
+cas_image = Image.open("College Images/COLLEGE ICONS/CALS.jpg")
 resized_cas = cas_image.resize((button_dimensions, button_dimensions))
 final_cas_image = ImageTk.PhotoImage(resized_cas)
 
@@ -77,6 +77,49 @@ images = [final_cas_image, final_cals_image, final_cems_image,
 collegedata = ["cas", "cals", 'cems', "cess", "cnhs", "gsb", "rsenr"]
 
 selected = None
+
+
+def button_click_handler(row, col):
+    # If no button has been selected yet, store this position
+    global selected
+    if selected is None:
+        selected = (row, col)
+        highlight_button(row, col)
+    else:
+        old_row, old_col = selected
+        new_row, new_col = row, col
+
+        if (old_row, old_col) == (new_row, new_col):
+            unhighlight_button(old_row, old_col)
+            selected = None
+            return
+
+        if adjacent(old_row, old_col, new_row, new_col):
+            try_swap(old_row, old_col, new_row, new_col)
+        else:
+            unhighlight_button(old_row, old_col)
+            selected = None
+
+
+def highlight_button(row, col):
+    btn = gameboard[row][col]
+    if btn:
+        btn.config(bg="yellow", relief="sunken", borderwidth=4)
+
+
+def unhighlight_button(row, col):
+    btn = gameboard[row][col]
+    if btn:
+        btn.config(bg="SystemButtonFace", relief="raised", borderwidth=2)
+
+
+def adjacent(r1, c1, r2, c2):
+    if r1 == r2 and abs(c1 - c2) == 1:
+        return True
+    if c1 == c2 and abs(r1-r2) == 1:
+        return True
+    else:
+        return False
 
 
 def buildbutton(x, y):
@@ -215,7 +258,6 @@ def matchremover(m):
                 try:
                     btn.destroy()
                 except Exception:
-                    # if button is thanos give up
                     pass
             gameboard[r][c] = None
 
@@ -256,52 +298,26 @@ def init_board(gameboard):
         matchremover(matchfinder(gameboard))
 
 
-def button_click_handler(row, col):
-    # If no button has been selected yet, store this position
-    if selected is None:
-        selected = (row, col)
-        highlight_button(row, col)
+def try_swap(r1, c1, r2, c2):
+    btn1 = gameboard[r1][c1]
+    btn2 = gameboard[r2][c2]
+    # Swapping them for now
+    gameboard[r1][c1] = btn2
+    gameboard[r2][c2] = btn1
+    # Updating positions on the screen
+    btn1.grid(row=r2, column=c2)
+    btn2.grid(row=r1, column=c1)
+
+    if matchfinder(gameboard):
+        matchremover(matchfinder(gameboard))
     else:
-        old_row, old_col = selected
-        new_row, new_col = row, col
-
-        if adjacent(old_row, old_col, new_row, new_col):
-            try_swap(old_row, old_col, new_row, new_col)
-        else:
-            selected = None
-            unhighlight_button(old_row, old_col)
-
-
-def highlight_button(row, col):
-    btn = gameboard[row][col]
-    if btn:
-        btn.config(bg="yellow", relief="sunken", borderwidth=4)
-
-
-def unhighlight_button(row, col):
-    btn = gameboard[row][col]
-    if btn:
-        btn.config(bg="SystemButtonFace", relief="raised", borderwidth=2)
-
-
-def adjacent(r1, c1, r2, c2):
-    if r1 == r2 and abs(c1 - c2) == 1:
-        return True
-    if c1 == c2 and abs(r1-r2) == 1:
-        return True
-    else:
-        return False
-
-
-def try_swap(r1, r2, c1, c2):
-    # TODO: Implement swap logic here
-    pass
+        gameboard[r1][c1] = btn1
+        gameboard[r2][c2] = btn2
+        btn1.grid(row=r1, column=c1)
+        btn2.grid(row=r2, column=c2)
 
 
 if __name__ == "__main__":
     init_board(gameboard)
-    print(matchfinder(gameboard))
-    button_click_handler()
-
-# Tells Python to run the event loop, blocks any code after from running until you close the window
-window.mainloop()
+    # Tells Python to run the event loop, blocks any code after from running until you close the window
+    window.mainloop()
