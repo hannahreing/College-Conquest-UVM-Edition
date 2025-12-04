@@ -27,7 +27,7 @@ canvas.grid(row=0, column=0, rowspan=10, columnspan=10)
 # Create all image objects.
 button_dimensions = 60
 # CAS
-cas_image = Image.open("College Images/COLLEGE ICONS/CALS.jpg")
+cas_image = Image.open("College Images/COLLEGE ICONS/CAS.jpg")
 resized_cas = cas_image.resize((button_dimensions, button_dimensions))
 final_cas_image = ImageTk.PhotoImage(resized_cas)
 
@@ -82,23 +82,29 @@ selected = None
 def button_click_handler(row, col):
     # If no button has been selected yet, store this position
     global selected
+
+    if gameboard[row][col] is None:
+        return
+
+    print(f"Clicked: ({row}, {col})")
+
+    # First click
     if selected is None:
         selected = (row, col)
         highlight_button(row, col)
+        print(f"Selected: ({row}, {col})")
+   # Second click
     else:
         old_row, old_col = selected
         new_row, new_col = row, col
 
-        if (old_row, old_col) == (new_row, new_col):
-            unhighlight_button(old_row, old_col)
-            selected = None
-            return
-
         if adjacent(old_row, old_col, new_row, new_col):
             try_swap(old_row, old_col, new_row, new_col)
         else:
-            unhighlight_button(old_row, old_col)
-            selected = None
+            print("Not adjacent")
+
+        unhighlight_button(old_row, old_col)
+        selected = None
 
 
 def highlight_button(row, col):
