@@ -267,7 +267,7 @@ def board_is_softlocked(gameboard):
             if y + 1 < cols:
                 if gameboard[x][y+1] is not None:
                     swap((x, y), (x, y+1))
-                    if matchfinder(gameboard):   # your existing code
+                    if matchfinder(gameboard):
                         swap((x, y), (x, y+1))  # swap back
                         return False           # NOT softlocked
                     swap((x, y), (x, y+1))      # swap back
