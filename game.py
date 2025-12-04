@@ -134,11 +134,18 @@ def buildbutton(row, col):
     index_college = random.randrange(0, 7)
     random_image = images[index_college]
 
-    button = tk.Button(foreground="white",
-                       image=random_image, command=lambda y=col, x=row: button_click_handler(row, col))
+    button = tk.Button(
+    foreground="white",
+    image=random_image,
+    command=lambda: button_click_handler(button.row, button.col)
+    )
+
 
     # Creates an attribute for each button that stores its college.
     button.type = collegedata[index_college]
+    button.row = row
+    button.col = col
+
 
     # Positions buttons in a grid layout.
     button.grid(row=row, column=col)
@@ -278,12 +285,19 @@ def matchremover(matches):
                     gameboard[write_row][col] = btn
                     # Update on screen
                     btn.grid(row=write_row, column=col)
+                    btn.row = write_row
+                    btn.col = col
 
                     # Clears old position
                     gameboard[row][col] = None
+
+                    btn.type = btn.type
                 else:
                     # Already in correct position
                     btn.grid(row=row, column=col)
+                    btn.row = row
+                    btn.col = col
+
                 write_row -= 1
 
         # Create new buttons at the top
@@ -303,12 +317,19 @@ def init_board(gameboard):
 def try_swap(r1, c1, r2, c2):
     btn1 = gameboard[r1][c1]
     btn2 = gameboard[r2][c2]
+    btn1.row, btn1.col = r2, c2
+    btn2.row, btn2.col = r1, c1
     # Swapping them for now
     gameboard[r1][c1] = btn2
     gameboard[r2][c2] = btn1
     # Updating positions on the screen
     btn1.grid(row=r2, column=c2)
+    btn1.row = r2
+    btn1.col = c2
+
     btn2.grid(row=r1, column=c1)
+    btn2.row = r1
+    btn2.col = c1
 
     if matchfinder(gameboard):
         matchremover(matchfinder(gameboard))
