@@ -322,6 +322,42 @@ def try_swap(r1, c1, r2, c2):
         btn1.grid(row=r1, column=c1)
         btn2.grid(row=r2, column=c2)
 
+def board_is_softlocked(gameboard):
+    rows = len(gameboard)
+    cols = len(gameboard[0])
+
+    #swap two coordinates
+    def swap(a, b):
+        (x1, y1), (x2, y2) = a, b
+        gameboard[x1][y1], gameboard[x2][y2] = gameboard[x2][y2], gameboard[x1][y1]
+
+    # Try swapping each tile with RIGHT and DOWN neighbors
+    for x in range(rows):
+        for y in range(cols):
+
+            # Skip empty spaces (shouldn't happen but safe)
+            if gameboard[x][y] is None:
+                continue
+
+            #Try right swap
+            if y + 1 < cols:
+                if gameboard[x][y+1] is not None:
+                    swap((x, y), (x, y+1))
+                    if matchfinder(gameboard):
+                        swap((x, y), (x, y+1))  # swap back
+                        return False           # NOT softlocked
+                    swap((x, y), (x, y+1))      # swap back
+
+            # Try down swap
+            if x + 1 < rows:
+                if gameboard[x+1][y] is not None:
+                    swap((x, y), (x+1, y))
+                    if matchfinder(gameboard):
+                        swap((x, y), (x+1, y))
+                        return False
+                    swap((x, y), (x+1, y))
+
+    return True   # no swaps produced matches -> softlocked
 
 if __name__ == "__main__":
     init_board(gameboard)
