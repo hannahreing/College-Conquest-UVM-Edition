@@ -137,7 +137,7 @@ def buildbutton(row, col):
     button = tk.Button(
     foreground="white",
     image=random_image,
-    command=lambda: button_click_handler(button.row, button.col)
+    command=lambda r=row, c= col : button_click_handler(r,c)
     )
 
 
@@ -146,6 +146,7 @@ def buildbutton(row, col):
     button.row = row
     button.col = col
 
+    button.config(command=lambda b=button: button_click_handler(b.row, b.col))
 
     # Positions buttons in a grid layout.
     button.grid(row=row, column=col)
@@ -252,59 +253,44 @@ def matchfinder(gameboard):
     # Returns total matches
     return horiz_finder(gameboard) + vertical_finder(gameboard)
 
-
 def matchremover(matches):
-
-    # Unduplicate the coordinates to remove
+    #Collect all coordinates to remove (unduplicate)
     coords = set()
     for group in matches:
         for (row, col) in group:
             coords.add((row, col))
-    # Destroy matched buttons and mark those spots None
+
+    #Destroy matched buttons and mark spots None
     for (row, col) in coords:
-        if 0 <= row < 10 and 0 <= col < 10:
-            btn = gameboard[row][col]
-            if btn is not None:
-                try:
-                    btn.destroy()
-                except Exception:
-                    pass
-            gameboard[row][col] = None
-    # For each column
+        btn = gameboard[row][col]
+        if btn is not None:
+            try:
+                btn.destroy()
+            except Exception:
+                pass
+        gameboard[row][col] = None
+
+    #For each column, move buttons down and fill new ones
     for col in range(10):
-        # Where the next existing tile should fall to (bottom-up)
+        # Gather all existing buttons in the column
+        existing_buttons = [gameboard[r][col] for r in range(10) if gameboard[r][col] is not None]
+
+        # Clear the column
+        for r in range(10):
+            gameboard[r][col] = None
+
+        # Place existing buttons at the bottom
         write_row = 9
-        # Scanning up the column
-        for row in range(9, -1, -1):
+        for btn in reversed(existing_buttons):
+            gameboard[write_row][col] = btn
+            btn.grid(row=write_row, column=col)
+            btn.row = write_row
+            btn.col = col
+            write_row -= 1
 
-            if gameboard[row][col] is not None:
-                btn = gameboard[row][col]
-                # If button needs to be moved down
-                if row != write_row:
-                    # Move to lower place
-                    gameboard[write_row][col] = btn
-                    # Update on screen
-                    btn.grid(row=write_row, column=col)
-                    btn.row = write_row
-                    btn.col = col
-
-                    # Clears old position
-                    gameboard[row][col] = None
-
-                    btn.type = btn.type
-                else:
-                    # Already in correct position
-                    btn.grid(row=row, column=col)
-                    btn.row = row
-                    btn.col = col
-
-                write_row -= 1
-
-        # Create new buttons at the top
-        for row in range(write_row, -1, -1):
-            if row < 0:
-                break
-            buildbutton(row, col)
+        # Fill the rest of the column with new buttons at the top
+        for r in range(write_row, -1, -1):
+            buildbutton(r, col)
 
 
 def init_board(gameboard):
@@ -317,27 +303,29 @@ def init_board(gameboard):
 def try_swap(r1, c1, r2, c2):
     btn1 = gameboard[r1][c1]
     btn2 = gameboard[r2][c2]
+
+    # Swap them in the gameboard
+    gameboard[r1][c1], gameboard[r2][c2] = btn2, btn1
+
+    # Update their .row and .col attributes
     btn1.row, btn1.col = r2, c2
     btn2.row, btn2.col = r1, c1
-    # Swapping them for now
-    gameboard[r1][c1] = btn2
-    gameboard[r2][c2] = btn1
-    # Updating positions on the screen
+
+    # Update positions on the screen
     btn1.grid(row=r2, column=c2)
-    btn1.row = r2
-    btn1.col = c2
-
     btn2.grid(row=r1, column=c1)
-    btn2.row = r1
-    btn2.col = c1
 
+    # Check for matches after swap
     if matchfinder(gameboard):
         matchremover(matchfinder(gameboard))
     else:
-        gameboard[r1][c1] = btn1
-        gameboard[r2][c2] = btn2
+        # No matches → swap back
+        gameboard[r1][c1], gameboard[r2][c2] = btn1, btn2
+        btn1.row, btn1.col = r1, c1
+        btn2.row, btn2.col = r2, c2
         btn1.grid(row=r1, column=c1)
         btn2.grid(row=r2, column=c2)
+
 
 
 def board_is_softlocked(gameboard):
