@@ -307,9 +307,9 @@ def init_board(gameboard):
     in_game = True
 
 def board_tracker(gameboard):
-    matchremover(gameboard)
+    matchremover(matchfinder(gameboard))
     while matchfinder(gameboard):
-        matchremover(gameboard)
+        matchremover(matchfinder(gameboard))
 
 def try_swap(r1, c1, r2, c2):
     btn1 = gameboard[r1][c1]
