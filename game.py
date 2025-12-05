@@ -78,6 +78,9 @@ collegedata = ["cas", "cals", 'cems', "cess", "cnhs", "gsb", "rsenr"]
 
 selected = None
 
+in_game = False
+
+score = 0
 
 def button_click_handler(row, col):
     # If no button has been selected yet, store this position
@@ -266,6 +269,8 @@ def matchremover(matches):
         if btn is not None:
             try:
                 btn.destroy()
+                if in_game:
+                    score += 3
             except Exception:
                 pass
         gameboard[row][col] = None
@@ -294,11 +299,17 @@ def matchremover(matches):
 
 
 def init_board(gameboard):
+    global in_game
     drawboard()
     print(matchfinder(gameboard))
     while matchfinder(gameboard):
         matchremover(matchfinder(gameboard))
+    in_game = True
 
+def board_tracker(gameboard):
+    matchremover(gameboard)
+    while matchfinder(gameboard):
+        matchremover(gameboard)
 
 def try_swap(r1, c1, r2, c2):
     btn1 = gameboard[r1][c1]
@@ -317,7 +328,7 @@ def try_swap(r1, c1, r2, c2):
 
     # Check for matches after swap
     if matchfinder(gameboard):
-        matchremover(matchfinder(gameboard))
+        board_tracker(gameboard)
     else:
         # No matches → swap back
         gameboard[r1][c1], gameboard[r2][c2] = btn1, btn2
@@ -326,10 +337,7 @@ def try_swap(r1, c1, r2, c2):
         btn1.grid(row=r1, column=c1)
         btn2.grid(row=r2, column=c2)
 
-def board_tracker(gameboard):
-    matchremover(gameboard)
-    while matchfinder(gameboard):
-        matchremover(gameboard)
+
 
 def board_is_softlocked(gameboard):
     rows = len(gameboard)
