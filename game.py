@@ -326,7 +326,10 @@ def try_swap(r1, c1, r2, c2):
         btn1.grid(row=r1, column=c1)
         btn2.grid(row=r2, column=c2)
 
-
+def board_tracker(gameboard):
+    matchremover(gameboard)
+    while matchfinder(gameboard):
+        matchremover(gameboard)
 
 def board_is_softlocked(gameboard):
     rows = len(gameboard)
