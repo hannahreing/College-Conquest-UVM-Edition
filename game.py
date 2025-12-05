@@ -34,12 +34,14 @@ timer_label = tk.Label(window, font=("Helvetica", 36),
                        fg="#154734", bg="#FFD700")
 timer_label.grid(row=0, column=9, pady=30, padx=30)
 
-#creates a frame for the score
-score_frame = tk.Frame(window, width=200, height=70, bg="#FFD700", highlightbackground="white", highlightthickness=5)
+# creates a frame for the score
+score_frame = tk.Frame(window, width=200, height=70, bg="#FFD700",
+                       highlightbackground="white", highlightthickness=5)
 score_frame.grid(row=0, column=0, pady=30, padx=30)
 
 # Creates score label
-score_label = tk.Label(window, font=("Helvetica", 36), fg="#154734", bg="#FFD700") 
+score_label = tk.Label(window, font=("Helvetica", 36),
+                       fg="#154734", bg="#FFD700")
 score_label.grid(row=0, column=0, pady=30, padx=30)
 
 
@@ -59,6 +61,7 @@ def countdown(count):
             "Helvetica", 24), fg="#154734")
         in_game = False
         return False
+
 
 grid_frame = tk.Frame(canvas,
                       width=700,
@@ -84,7 +87,8 @@ temp_frame = tk.Frame(canvas,
 # create windows for frames on canvas now that they are defined
 canvas.create_window(50, 150, anchor="nw", window=grid_frame)
 canvas.create_text(105, 50, text="CREDITS", font=("Arial", 20), fill="white")
-canvas.create_text(625, 50, text="TIME LEFT:", font=("Arial", 20), fill="white")
+canvas.create_text(625, 50, text="TIME LEFT:",
+                   font=("Arial", 20), fill="white")
 
 # Create all image objects.
 button_dimensions = 60
@@ -146,6 +150,7 @@ in_game = False
 score = 0
 score_label.config(text=str(score), fg="#154734")
 window.after(1000, score)
+
 
 def button_click_handler(row, col):
     # If no button has been selected yet, store this position
@@ -338,7 +343,7 @@ def matchremover(matches):
                 if in_game:
                     score += 3
                     score_label.config(text=score, font=("Helvetica", 36),
-                    fg="#154734")
+                                       fg="#154734")
             except Exception:
                 pass
         gameboard[row][col] = None
@@ -365,6 +370,42 @@ def matchremover(matches):
         # Fill the rest of the column with new buttons at the top
         for r in range(write_row, -1, -1):
             buildbutton(r, col)
+
+
+def level_up(gameboard):
+    if 120 <= score <= 122:
+        level = "You earned your undergraduate degree!"
+    if 156 <= score <= 158:
+        level = "You earned your masters degree!"
+    if 216 <= score <= 218:
+        level = "You earned your PhD!"
+    else:
+        popup = None
+    popup = tk.Toplevel(window)
+    popup.overrideredirect(True)
+    popup.attributes('-topmost', True)
+
+    label = tk.Label(popup, text=level, font=("Arial", 20, "bold"),
+                     bg="#FFD700", fg="#154734", padx=20, pady=10)
+    label.pack()
+
+    # Code to center the popup -- not our code
+    popup.update_idletasks()
+    parent_x = window.winfo_rootx()
+    parent_y = window.winfo_rooty()
+    parent_w = window.winfo_width()
+    parent_h = window.winfo_height()
+    popup_w = popup.winfo_width()
+    popup_h = popup.winfo_height()
+
+    x = parent_x + (parent_w // 2) - (popup_w // 2)
+    y = parent_y + (parent_h // 2) - (popup_h // 2)
+    popup.geometry(f"+{x}+{y}")
+
+    # Our code again
+    window.after(500, popup.destroy)
+
+    return score
 
 
 def init_board(gameboard):
