@@ -382,18 +382,36 @@ def level_up(score):
         156: "You earned your masters degree!",
         216: "You earned your PhD!",
     }
-    # show the first threshold that has been reached but not shown yet
-    for t in thresholds.keys():
+
+    for t in thresholds:
         if score >= t and t not in unlocked_levels:
             unlocked_levels.add(t)
             msg = thresholds[t]
-            overlay = tk.Label(grid_frame, text=msg,
-                               font=("Arial", 18, "bold"),
-                               bg="#FFD700", fg="#154734",
-                               padx=16, pady=8)
-            overlay.place(relx=0.5, rely=0.45, anchor="center")
-            overlay.lift()
-            window.after(500, overlay.destroy)
+
+            # Create popup window
+            popup = tk.Toplevel(window)
+            popup.attributes('-topmost', True)
+            popup.overrideredirect(True)
+
+            # Center popup relative to main window
+            popup.update_idletasks()
+            x = window.winfo_x() + window.winfo_width() // 2
+            y = window.winfo_y() + window.winfo_height() // 2
+            popup.geometry(f"+{x - 150}+{y - 40}")
+
+            # Add message
+            label = tk.Label(
+                popup,
+                text=msg,
+                font=("Arial", 18, "bold"),
+                bg="#FFD700",
+                fg="#154734",
+                padx=20, pady=10
+            )
+            label.pack()
+
+            # Auto-destroy after 0.5 seconds
+            window.after(500, popup.destroy)
             break
 
 
