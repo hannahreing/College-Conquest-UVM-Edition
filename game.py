@@ -2,7 +2,7 @@
 College Conquest UVM Edition
 Elijah Burton, Luke Price, Hannah Reing
 CS 1210 G
-Hopefully the Gods of the mormon turtle church favor us
+Match 3 puzzle UVM edition
 """
 
 import random
@@ -387,6 +387,7 @@ def board_is_softlocked(gameboard):
         (r1, c1), (r2, c2) = a, b
         gameboard[r1][c1], gameboard[r2][c2] = gameboard[r2][c2], gameboard[r1][c1]
 
+    #may the mormon turtle odds be ever in our favor
     # Try swapping each tile with RIGHT and DOWN neighbors
     for row in range(rows):
         for col in range(cols):
