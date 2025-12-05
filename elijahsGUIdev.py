@@ -2,7 +2,6 @@
 College Conquest UVM Edition
 Elijah Burton, Luke Price, Hannah Reing
 CS 1210 G
-Hopefully the Gods of the mormon turtle church favor us
 """
 
 from itertools import count
@@ -16,8 +15,15 @@ from PIL import Image, ImageTk
 window = tk.Tk()
 window.title("Match 3: Graduate for Free!")
 
-root_test = tk.Tk()
-root_test.title("Diploma!")
+# Ensure the main window is raised so it appears to the user.
+window.lift()
+window.attributes('-topmost', True)
+# Clear the topmost flag shortly after to allow normal window behavior
+window.after(100, lambda: window.attributes('-topmost', False))
+
+# If a secondary window is needed, use a Toplevel (uncomment to use):
+# root_test = tk.Toplevel(window)
+# root_test.title("Diploma!")
 
 # Allows dimensions of window to change.
 canvas_width = 800
