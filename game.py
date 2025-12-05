@@ -144,7 +144,7 @@ in_game = False
 
 # updating score variable in score_label
 score = 0
-score_label.config(text=str(score), fg="white")
+score_label.config(text=str(score), fg="#154734")
 window.after(1000, score)
 
 def button_click_handler(row, col):
@@ -476,6 +476,6 @@ def board_is_softlocked(gameboard):
 
 if __name__ == "__main__":
     init_board(gameboard)
-    countdown(120)
+    countdown(60)
     # Tells Python to run the event loop, blocks any code after from running until you close the window
     window.mainloop()
