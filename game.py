@@ -2,7 +2,7 @@
 College Conquest UVM Edition
 Elijah Burton, Luke Price, Hannah Reing
 CS 1210 G
-Hopefully the Gods of the mormon turtle church favor us
+Match 3 puzzle UVM edition
 """
 
 import random
@@ -16,13 +16,52 @@ window = tk.Tk()
 window.title("Match 3: Graduate for Free!")
 
 # Allows dimensions of window to change.
-canvas_width = 700
-canvas_height = 700
+canvas_width = 800
+canvas_height = 900
 spacing = 45
-offset = 60
+offset = 150
 canvas = tk.Canvas(window, width=canvas_width,
                    height=canvas_height, background="#154734")
 canvas.grid(row=0, column=0, rowspan=10, columnspan=10)
+
+#create a frame for the timer
+timer_frame = tk.Frame(window, width=200, height=70, bg="#FFD700", highlightbackground="white", highlightthickness=5)
+timer_frame.grid(row=0, column=0, pady=20, padx=20)
+
+# Creates timer label
+timer_label = tk.Label(window, font=("Helvetica", 36), fg="white", bg="#FFD700")  
+timer_label.grid(row=0, column=0, pady=30, padx=30)
+def countdown(count):
+    # convert seconds to minutes and seconds
+    minutes = count // 60
+    seconds = count % 60
+    time_format = f"{minutes:02d}:{seconds:02d}"
+
+    if count > 0:
+        # update the label every 1000 milliseconds (1 second)
+        timer_label.config(text=time_format, fg="white")
+        window.after(1000, countdown, count-1)
+    else:
+        timer_label.config(text="Time's up!",font=("Helvetica", 24), fg="#154734")
+        return False
+
+grid_frame = tk.Frame(canvas,
+                      width=700,
+                      height=700,
+                      highlightbackground="white",
+                      highlightthickness=10,
+                      background="#154734")
+
+test_frame = tk.Frame(canvas,
+                      width=150,
+                      height=50,
+                      highlightbackground="white",
+                      highlightthickness=10,
+                      background="#FFD700")
+
+#create windows for frames on canvas now that they are defined
+canvas.create_window(50, 150, anchor="nw", window=grid_frame)
+canvas.create_text(75, 25, text="CREDITS", font=("Arial", 20), fill="white")
 
 # Create all image objects.
 button_dimensions = 60
@@ -152,7 +191,7 @@ def buildbutton(row, col):
     button.config(command=lambda b=button: button_click_handler(b.row, b.col))
 
     # Positions buttons in a grid layout.
-    button.grid(row=row, column=col)
+    button.grid(row=row, column=col, in_=grid_frame)
 
     # Assigns each button to a space in a 2d list "gameboard" corresponding with the board.
     # For example, gameboard[1][2] gives button in second row, third column (Python is zero indexed).
@@ -348,6 +387,7 @@ def board_is_softlocked(gameboard):
         (r1, c1), (r2, c2) = a, b
         gameboard[r1][c1], gameboard[r2][c2] = gameboard[r2][c2], gameboard[r1][c1]
 
+    #may the mormon turtle odds be ever in our favor
     # Try swapping each tile with RIGHT and DOWN neighbors
     for row in range(rows):
         for col in range(cols):

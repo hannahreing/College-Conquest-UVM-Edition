@@ -2,9 +2,9 @@
 College Conquest UVM Edition
 Elijah Burton, Luke Price, Hannah Reing
 CS 1210 G
-Hopefully the Gods of the mormon turtle church favor us
 """
 
+from itertools import count
 import random
 import math
 import tkinter as tk
@@ -15,14 +15,63 @@ from PIL import Image, ImageTk
 window = tk.Tk()
 window.title("Match 3: Graduate for Free!")
 
+# Ensure the main window is raised so it appears to the user.
+window.lift()
+window.attributes('-topmost', True)
+# Clear the topmost flag shortly after to allow normal window behavior
+window.after(100, lambda: window.attributes('-topmost', False))
+
+# If a secondary window is needed, use a Toplevel (uncomment to use):
+# root_test = tk.Toplevel(window)
+# root_test.title("Diploma!")
+
 # Allows dimensions of window to change.
-canvas_width = 700
-canvas_height = 700
+canvas_width = 800
+canvas_height = 900
 spacing = 45
-offset = 60
+offset = 150
 canvas = tk.Canvas(window, width=canvas_width,
                    height=canvas_height, background="#154734")
 canvas.grid(row=0, column=0, rowspan=10, columnspan=10)
+
+#create a frame for the timer
+timer_frame = tk.Frame(window, width=200, height=70, bg="#FFD700", highlightbackground="white", highlightthickness=5)
+timer_frame.grid(row=0, column=0, pady=20, padx=20)
+
+# Creates timer label
+timer_label = tk.Label(window, font=("Helvetica", 36), fg="white", bg="#FFD700")  
+timer_label.grid(row=0, column=0, pady=30, padx=30)
+def countdown(count):
+    # convert seconds to minutes and seconds
+    minutes = count // 60
+    seconds = count % 60
+    time_format = f"{minutes:02d}:{seconds:02d}"
+
+    if count > 0:
+        # update the label every 1000 milliseconds (1 second)
+        timer_label.config(text=time_format, fg="white")
+        window.after(1000, countdown, count-1)
+    else:
+        timer_label.config(text="Time's up!",font=("Helvetica", 24), fg="#154734")
+        return False
+
+grid_frame = tk.Frame(canvas,
+                      width=700,
+                      height=700,
+                      highlightbackground="white",
+                      highlightthickness=10,
+                      background="#154734")
+
+test_frame = tk.Frame(canvas,
+                      width=150,
+                      height=50,
+                      highlightbackground="white",
+                      highlightthickness=10,
+                      background="#FFD700")
+
+#create windows for frames on canvas now that they are defined
+canvas.create_window(50, 150, anchor="nw", window=grid_frame)
+canvas.create_text(75, 25, text="CREDITS", font=("Arial", 20), fill="white")
 
 # Create all image objects.
 button_dimensions = 60
@@ -82,14 +131,14 @@ def buildbutton(x, y):
     index_college = random.randrange(0, 7)
     random_image = images[index_college]
 
-    button = tk.Button(foreground="white",
+    button = tk.Button(grid_frame, foreground="white",
                        image=random_image, command=lambda x=x, y=y: button_click_handler(x, y))
 
     # Creates an attribute for each button that stores its college.
     button.type = collegedata[index_college]
 
     # Positions buttons in a grid layout.
-    button.grid(row=x, column=y)
+    button.grid(row=x, column=y, padx=1, pady=1)
 
     # Assigns each button to a space in a 2d list "gameboard" corresponding with the board.
     # For example, gameboard[1][2] gives button in second row, third column (Python is zero indexed).
@@ -246,43 +295,6 @@ def matchremover(m):
                 break
             buildbutton(r, c)
 
-def board_is_softlocked(gameboard):
-    rows = len(gameboard)
-    cols = len(gameboard[0])
-
-    #swap two coordinates
-    def swap(a, b):
-        (x1, y1), (x2, y2) = a, b
-        gameboard[x1][y1], gameboard[x2][y2] = gameboard[x2][y2], gameboard[x1][y1]
-
-    # Try swapping each tile with RIGHT and DOWN neighbors
-    for x in range(rows):
-        for y in range(cols):
-
-            # Skip empty spaces (shouldn't happen but safe)
-            if gameboard[x][y] is None:
-                continue
-
-            #Try right swap
-            if y + 1 < cols:
-                if gameboard[x][y+1] is not None:
-                    swap((x, y), (x, y+1))
-                    if matchfinder(gameboard):
-                        swap((x, y), (x, y+1))  # swap back
-                        return False           # NOT softlocked
-                    swap((x, y), (x, y+1))      # swap back
-
-            # Try down swap
-            if x + 1 < rows:
-                if gameboard[x+1][y] is not None:
-                    swap((x, y), (x+1, y))
-                    if matchfinder(gameboard):
-                        swap((x, y), (x+1, y))
-                        return False
-                    swap((x, y), (x+1, y))
-
-    return True   # no swaps produced matches -> softlocked
-
 
 def init_board(gameboard):
     drawboard()
@@ -295,8 +307,9 @@ def init_board(gameboard):
 
 
 if __name__ == "__main__":
-    init_board(gameboard)
-    print(matchfinder(gameboard))
+        init_board(gameboard)
+        print(matchfinder(gameboard))
+        countdown(10)
 
 # Tells Python to run the event loop, blocks any code after from running until you close the window
 window.mainloop()
