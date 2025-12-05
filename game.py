@@ -473,6 +473,5 @@ def board_is_softlocked(gameboard):
 if __name__ == "__main__":
     init_board(gameboard)
     countdown(120)
-    temp(120)
     # Tells Python to run the event loop, blocks any code after from running until you close the window
     window.mainloop()
