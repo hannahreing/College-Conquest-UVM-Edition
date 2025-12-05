@@ -146,6 +146,8 @@ selected = None
 
 in_game = False
 
+unlocked_levels = set()
+
 # updating score variable in score_label
 score = 0
 score_label.config(text=str(score), fg="#154734")
@@ -344,6 +346,7 @@ def matchremover(matches):
                     score += 3
                     score_label.config(text=score, font=("Helvetica", 36),
                                        fg="#154734")
+                    level_up(score)
             except Exception:
                 pass
         gameboard[row][col] = None
@@ -372,40 +375,26 @@ def matchremover(matches):
             buildbutton(r, col)
 
 
-def level_up(gameboard):
-    if 120 <= score <= 122:
-        level = "You earned your undergraduate degree!"
-    if 156 <= score <= 158:
-        level = "You earned your masters degree!"
-    if 216 <= score <= 218:
-        level = "You earned your PhD!"
-    else:
-        popup = None
-    popup = tk.Toplevel(window)
-    popup.overrideredirect(True)
-    popup.attributes('-topmost', True)
-
-    label = tk.Label(popup, text=level, font=("Arial", 20, "bold"),
-                     bg="#FFD700", fg="#154734", padx=20, pady=10)
-    label.pack()
-
-    # Code to center the popup -- not our code
-    popup.update_idletasks()
-    parent_x = window.winfo_rootx()
-    parent_y = window.winfo_rooty()
-    parent_w = window.winfo_width()
-    parent_h = window.winfo_height()
-    popup_w = popup.winfo_width()
-    popup_h = popup.winfo_height()
-
-    x = parent_x + (parent_w // 2) - (popup_w // 2)
-    y = parent_y + (parent_h // 2) - (popup_h // 2)
-    popup.geometry(f"+{x}+{y}")
-
-    # Our code again
-    window.after(500, popup.destroy)
-
-    return score
+def level_up(score):
+    global unlocked_levels
+    thresholds = {
+        120: "You earned your undergraduate degree!",
+        156: "You earned your masters degree!",
+        216: "You earned your PhD!",
+    }
+    # show the first threshold that has been reached but not shown yet
+    for t in thresholds.keys():
+        if score >= t and t not in unlocked_levels:
+            unlocked_levels.add(t)
+            msg = thresholds[t]
+            overlay = tk.Label(grid_frame, text=msg,
+                               font=("Arial", 18, "bold"),
+                               bg="#FFD700", fg="#154734",
+                               padx=16, pady=8)
+            overlay.place(relx=0.5, rely=0.45, anchor="center")
+            overlay.lift()
+            window.after(500, overlay.destroy)
+            break
 
 
 def init_board(gameboard):
