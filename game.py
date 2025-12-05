@@ -16,13 +16,52 @@ window = tk.Tk()
 window.title("Match 3: Graduate for Free!")
 
 # Allows dimensions of window to change.
-canvas_width = 700
-canvas_height = 700
+canvas_width = 800
+canvas_height = 900
 spacing = 45
-offset = 60
+offset = 150
 canvas = tk.Canvas(window, width=canvas_width,
                    height=canvas_height, background="#154734")
 canvas.grid(row=0, column=0, rowspan=10, columnspan=10)
+
+#create a frame for the timer
+timer_frame = tk.Frame(window, width=200, height=70, bg="#FFD700", highlightbackground="white", highlightthickness=5)
+timer_frame.grid(row=0, column=0, pady=20, padx=20)
+
+# Creates timer label
+timer_label = tk.Label(window, font=("Helvetica", 36), fg="white", bg="#FFD700")  
+timer_label.grid(row=0, column=0, pady=30, padx=30)
+def countdown(count):
+    # convert seconds to minutes and seconds
+    minutes = count // 60
+    seconds = count % 60
+    time_format = f"{minutes:02d}:{seconds:02d}"
+
+    if count > 0:
+        # update the label every 1000 milliseconds (1 second)
+        timer_label.config(text=time_format, fg="white")
+        window.after(1000, countdown, count-1)
+    else:
+        timer_label.config(text="Time's up!",font=("Helvetica", 24), fg="#154734")
+        return False
+
+grid_frame = tk.Frame(canvas,
+                      width=700,
+                      height=700,
+                      highlightbackground="white",
+                      highlightthickness=10,
+                      background="#154734")
+
+test_frame = tk.Frame(canvas,
+                      width=150,
+                      height=50,
+                      highlightbackground="white",
+                      highlightthickness=10,
+                      background="#FFD700")
+
+#create windows for frames on canvas now that they are defined
+canvas.create_window(50, 150, anchor="nw", window=grid_frame)
+canvas.create_text(75, 25, text="CREDITS", font=("Arial", 20), fill="white")
 
 # Create all image objects.
 button_dimensions = 60
@@ -78,6 +117,9 @@ collegedata = ["cas", "cals", 'cems', "cess", "cnhs", "gsb", "rsenr"]
 
 selected = None
 
+in_game = False
+
+score = 0
 
 def button_click_handler(row, col):
     # If no button has been selected yet, store this position
@@ -149,7 +191,7 @@ def buildbutton(row, col):
     button.config(command=lambda b=button: button_click_handler(b.row, b.col))
 
     # Positions buttons in a grid layout.
-    button.grid(row=row, column=col)
+    button.grid(row=row, column=col, in_=grid_frame)
 
     # Assigns each button to a space in a 2d list "gameboard" corresponding with the board.
     # For example, gameboard[1][2] gives button in second row, third column (Python is zero indexed).
@@ -266,6 +308,8 @@ def matchremover(matches):
         if btn is not None:
             try:
                 btn.destroy()
+                if in_game:
+                    score += 3
             except Exception:
                 pass
         gameboard[row][col] = None
@@ -294,11 +338,17 @@ def matchremover(matches):
 
 
 def init_board(gameboard):
+    global in_game
     drawboard()
     print(matchfinder(gameboard))
     while matchfinder(gameboard):
         matchremover(matchfinder(gameboard))
+    in_game = True
 
+def board_tracker(gameboard):
+    matchremover(matchfinder(gameboard))
+    while matchfinder(gameboard):
+        matchremover(matchfinder(gameboard))
 
 def try_swap(r1, c1, r2, c2):
     btn1 = gameboard[r1][c1]
@@ -317,7 +367,7 @@ def try_swap(r1, c1, r2, c2):
 
     # Check for matches after swap
     if matchfinder(gameboard):
-        matchremover(matchfinder(gameboard))
+        board_tracker(gameboard)
     else:
         # No matches → swap back
         gameboard[r1][c1], gameboard[r2][c2] = btn1, btn2
