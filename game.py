@@ -341,7 +341,7 @@ def matchremover(matches):
             try:
                 btn.destroy()
                 if in_game:
-                    score += 2
+                    score += 3
                     score_label.config(text=score, font=("Helvetica", 36),
                                        fg="#154734")
             except Exception:
