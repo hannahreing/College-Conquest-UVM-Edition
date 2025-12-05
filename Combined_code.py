@@ -192,7 +192,8 @@ def buildbutton(row, col):
     button.config(command=lambda b=button: button_click_handler(b.row, b.col))
 
     # Positions buttons in a grid layout.
-    button.grid(row=row, column=col)
+    button.grid(row=row, column=col, in_=grid_frame)
+
 
     # Assigns each button to a space in a 2d list "gameboard" corresponding with the board.
     # For example, gameboard[1][2] gives button in second row, third column (Python is zero indexed).
