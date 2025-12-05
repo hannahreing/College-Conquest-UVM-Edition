@@ -48,6 +48,7 @@ def countdown(count):
     else:
         timer_label.config(text="Time's up!", font=(
             "Helvetica", 24), fg="#154734")
+        in_game = False
         return False
 
 
