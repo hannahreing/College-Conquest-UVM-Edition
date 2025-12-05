@@ -24,13 +24,17 @@ canvas = tk.Canvas(window, width=canvas_width,
                    height=canvas_height, background="#154734")
 canvas.grid(row=0, column=0, rowspan=10, columnspan=10)
 
-#create a frame for the timer
-timer_frame = tk.Frame(window, width=200, height=70, bg="#FFD700", highlightbackground="white", highlightthickness=5)
+# create a frame for the timer
+timer_frame = tk.Frame(window, width=200, height=70, bg="#FFD700",
+                       highlightbackground="white", highlightthickness=5)
 timer_frame.grid(row=0, column=0, pady=20, padx=20)
 
 # Creates timer label
-timer_label = tk.Label(window, font=("Helvetica", 36), fg="white", bg="#FFD700")  
+timer_label = tk.Label(window, font=("Helvetica", 36),
+                       fg="white", bg="#FFD700")
 timer_label.grid(row=0, column=0, pady=30, padx=30)
+
+
 def countdown(count):
     # convert seconds to minutes and seconds
     minutes = count // 60
@@ -42,8 +46,10 @@ def countdown(count):
         timer_label.config(text=time_format, fg="white")
         window.after(1000, countdown, count-1)
     else:
-        timer_label.config(text="Time's up!",font=("Helvetica", 24), fg="#154734")
+        timer_label.config(text="Time's up!", font=(
+            "Helvetica", 24), fg="#154734")
         return False
+
 
 grid_frame = tk.Frame(canvas,
                       width=700,
@@ -59,7 +65,7 @@ test_frame = tk.Frame(canvas,
                       highlightthickness=10,
                       background="#FFD700")
 
-#create windows for frames on canvas now that they are defined
+# create windows for frames on canvas now that they are defined
 canvas.create_window(50, 150, anchor="nw", window=grid_frame)
 canvas.create_text(75, 25, text="CREDITS", font=("Arial", 20), fill="white")
 
@@ -121,6 +127,7 @@ in_game = False
 
 score = 0
 
+
 def button_click_handler(row, col):
     # If no button has been selected yet, store this position
     global selected
@@ -177,11 +184,10 @@ def buildbutton(row, col):
     random_image = images[index_college]
 
     button = tk.Button(
-    foreground="white",
-    image=random_image,
-    command=lambda r=row, c= col : button_click_handler(r,c)
+        foreground="white",
+        image=random_image,
+        command=lambda r=row, c=col: button_click_handler(r, c)
     )
-
 
     # Creates an attribute for each button that stores its college.
     button.type = collegedata[index_college]
@@ -295,14 +301,15 @@ def matchfinder(gameboard):
     # Returns total matches
     return horiz_finder(gameboard) + vertical_finder(gameboard)
 
+
 def matchremover(matches):
-    #Collect all coordinates to remove (unduplicate)
+    # Collect all coordinates to remove (unduplicate)
     coords = set()
     for group in matches:
         for (row, col) in group:
             coords.add((row, col))
 
-    #Destroy matched buttons and mark spots None
+    # Destroy matched buttons and mark spots None
     for (row, col) in coords:
         btn = gameboard[row][col]
         if btn is not None:
@@ -314,10 +321,11 @@ def matchremover(matches):
                 pass
         gameboard[row][col] = None
 
-    #For each column, move buttons down and fill new ones
+    # For each column, move buttons down and fill new ones
     for col in range(10):
         # Gather all existing buttons in the column
-        existing_buttons = [gameboard[r][col] for r in range(10) if gameboard[r][col] is not None]
+        existing_buttons = [gameboard[r][col]
+                            for r in range(10) if gameboard[r][col] is not None]
 
         # Clear the column
         for r in range(10):
@@ -345,10 +353,12 @@ def init_board(gameboard):
         matchremover(matchfinder(gameboard))
     in_game = True
 
+
 def board_tracker(gameboard):
     matchremover(matchfinder(gameboard))
     while matchfinder(gameboard):
         matchremover(matchfinder(gameboard))
+
 
 def try_swap(r1, c1, r2, c2):
     btn1 = gameboard[r1][c1]
@@ -368,6 +378,18 @@ def try_swap(r1, c1, r2, c2):
     # Check for matches after swap
     if matchfinder(gameboard):
         board_tracker(gameboard)
+        # Creating popup in front of board
+        adjectives = random.choice(
+            ["Amazing!", "Nice Work!", "Great!", "Way to go!", "Fantastic!", "Awesome!", "Superb!"])
+        popup = tk.Toplevel(window)
+        popup.overrideredirect(True)
+        popup.attributes('-topmost', True)
+
+        label = tk.Label(popup, text=adjectives, font=("Arial", 20, "bold"),
+                         bg="#FFD700", fg="#154734", padx=20, pady=10)
+        label.pack()
+
+        window.after(500, popup.destroy)
     else:
         # No matches → swap back
         gameboard[r1][c1], gameboard[r2][c2] = btn1, btn2
@@ -375,7 +397,15 @@ def try_swap(r1, c1, r2, c2):
         btn2.row, btn2.col = r2, c2
         btn1.grid(row=r1, column=c1)
         btn2.grid(row=r2, column=c2)
+        popup = tk.Toplevel(window)
+        popup.overrideredirect(True)
+        popup.attributes('-topmost', True)
 
+        label = tk.Label(popup, text="No match. Try again.", font=("Arial", 20, "bold"),
+                         bg="#FFD700", fg="#154734", padx=20, pady=10)
+        label.pack()
+
+        window.after(500, popup.destroy)
 
 
 def board_is_softlocked(gameboard):
@@ -387,7 +417,7 @@ def board_is_softlocked(gameboard):
         (r1, c1), (r2, c2) = a, b
         gameboard[r1][c1], gameboard[r2][c2] = gameboard[r2][c2], gameboard[r1][c1]
 
-    #may the mormon turtle odds be ever in our favor
+    # may the mormon turtle odds be ever in our favor
     # Try swapping each tile with RIGHT and DOWN neighbors
     for row in range(rows):
         for col in range(cols):
