@@ -411,8 +411,8 @@ def level_up(score):
             )
             label.pack()
 
-            # Auto-destroy after 0.5 seconds
-            window.after(500, popup.destroy)
+            # Auto-destroy after 1 second
+            window.after(1500, popup.destroy)
             break
 
 
