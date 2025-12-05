@@ -389,23 +389,28 @@ def try_swap(r1, c1, r2, c2):
                          bg="#FFD700", fg="#154734", padx=20, pady=10)
         label.pack()
 
+        # Code to center the popup -- not our code
+        popup.update_idletasks()
+        parent_x = window.winfo_rootx()
+        parent_y = window.winfo_rooty()
+        parent_w = window.winfo_width()
+        parent_h = window.winfo_height()
+        popup_w = popup.winfo_width()
+        popup_h = popup.winfo_height()
+
+        x = parent_x + (parent_w // 2) - (popup_w // 2)
+        y = parent_y + (parent_h // 2) - (popup_h // 2)
+        popup.geometry(f"+{x}+{y}")
+
+        # Our code again
         window.after(500, popup.destroy)
     else:
-        # No matches → swap back
+        # No matches so swap buttons back
         gameboard[r1][c1], gameboard[r2][c2] = btn1, btn2
         btn1.row, btn1.col = r1, c1
         btn2.row, btn2.col = r2, c2
         btn1.grid(row=r1, column=c1)
         btn2.grid(row=r2, column=c2)
-        popup = tk.Toplevel(window)
-        popup.overrideredirect(True)
-        popup.attributes('-topmost', True)
-
-        label = tk.Label(popup, text="No match. Try again.", font=("Arial", 20, "bold"),
-                         bg="#FFD700", fg="#154734", padx=20, pady=10)
-        label.pack()
-
-        window.after(500, popup.destroy)
 
 
 def board_is_softlocked(gameboard):
