@@ -4,7 +4,6 @@ Elijah Burton, Luke Price, Hannah Reing
 CS 1210 G
 """
 
-from itertools import count
 import random
 import math
 import tkinter as tk
@@ -15,15 +14,9 @@ from PIL import Image, ImageTk
 window = tk.Tk()
 window.title("Match 3: Graduate for Free!")
 
-# Ensure the main window is raised so it appears to the user.
-window.lift()
-window.attributes('-topmost', True)
-# Clear the topmost flag shortly after to allow normal window behavior
-window.after(100, lambda: window.attributes('-topmost', False))
-
-# If a secondary window is needed, use a Toplevel (uncomment to use):
-# root_test = tk.Toplevel(window)
-# root_test.title("Diploma!")
+# Creates a new window for diploma display upon game completion.
+#root_test = tk.Toplevel(window)
+#root_test.title("Diploma!")
 
 # Allows dimensions of window to change.
 canvas_width = 800
@@ -34,13 +27,22 @@ canvas = tk.Canvas(window, width=canvas_width,
                    height=canvas_height, background="#154734")
 canvas.grid(row=0, column=0, rowspan=10, columnspan=10)
 
-#create a frame for the timer
+#creates a frame for the timer
 timer_frame = tk.Frame(window, width=200, height=70, bg="#FFD700", highlightbackground="white", highlightthickness=5)
-timer_frame.grid(row=0, column=0, pady=20, padx=20)
+timer_frame.grid(row=0, column=9, pady=30, padx=30)
 
 # Creates timer label
 timer_label = tk.Label(window, font=("Helvetica", 36), fg="white", bg="#FFD700")  
-timer_label.grid(row=0, column=0, pady=30, padx=30)
+timer_label.grid(row=0, column=9, pady=30, padx=30)
+
+#creates a frame for the score
+score_frame = tk.Frame(window, width=200, height=70, bg="#FFD700", highlightbackground="white", highlightthickness=5)
+score_frame.grid(row=0, column=0, pady=30, padx=30)
+
+# Creates score label
+score_label = tk.Label(window, font=("Helvetica", 36), fg="white", bg="#FFD700") 
+score_label.grid(row=0, column=0, pady=30, padx=30)
+
 def countdown(count):
     # convert seconds to minutes and seconds
     minutes = count // 60
@@ -55,6 +57,19 @@ def countdown(count):
         timer_label.config(text="Time's up!",font=("Helvetica", 24), fg="#154734")
         return False
 
+def temp(temp_count):
+    # convert seconds to minutes and seconds
+    minutes = temp_count // 60
+    seconds = temp_count % 60
+    time_format = f"{minutes:02d}:{seconds:02d}"
+
+    if temp_count > 0:
+        # update the label every 1000 milliseconds (1 second)
+        score_label.config(text=time_format, fg="white")
+        window.after(1000, temp, temp_count-1)
+    else:
+        score_label.config(text="Time's up!",font=("Helvetica", 24), fg="#154734")
+
 grid_frame = tk.Frame(canvas,
                       width=700,
                       height=700,
@@ -62,16 +77,25 @@ grid_frame = tk.Frame(canvas,
                       highlightthickness=10,
                       background="#154734")
 
-test_frame = tk.Frame(canvas,
+timer_frame = tk.Frame(canvas,
                       width=150,
                       height=50,
                       highlightbackground="white",
                       highlightthickness=10,
                       background="#FFD700")
 
+temp_frame = tk.Frame(canvas,
+                      width=150,
+                      height=50,
+                      highlightbackground="white",
+                      highlightthickness=10,
+                      background="#FFD700")
+
+
 #create windows for frames on canvas now that they are defined
 canvas.create_window(50, 150, anchor="nw", window=grid_frame)
-canvas.create_text(75, 25, text="CREDITS", font=("Arial", 20), fill="white")
+canvas.create_text(105, 50, text="CREDITS:", font=("Arial", 20), fill="white")
+canvas.create_text(625, 50, text="TIME LEFT:", font=("Arial", 20), fill="white")
 
 # Create all image objects.
 button_dimensions = 60
@@ -310,6 +334,7 @@ if __name__ == "__main__":
         init_board(gameboard)
         print(matchfinder(gameboard))
         countdown(10)
+        temp(50)
 
 # Tells Python to run the event loop, blocks any code after from running until you close the window
 window.mainloop()

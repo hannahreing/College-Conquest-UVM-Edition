@@ -27,12 +27,20 @@ canvas.grid(row=0, column=0, rowspan=10, columnspan=10)
 # create a frame for the timer
 timer_frame = tk.Frame(window, width=200, height=70, bg="#FFD700",
                        highlightbackground="white", highlightthickness=5)
-timer_frame.grid(row=0, column=0, pady=20, padx=20)
+timer_frame.grid(row=0, column=9, pady=30, padx=30)
 
 # Creates timer label
 timer_label = tk.Label(window, font=("Helvetica", 36),
                        fg="white", bg="#FFD700")
-timer_label.grid(row=0, column=0, pady=30, padx=30)
+timer_label.grid(row=0, column=9, pady=30, padx=30)
+
+#creates a frame for the score
+score_frame = tk.Frame(window, width=200, height=70, bg="#FFD700", highlightbackground="white", highlightthickness=5)
+score_frame.grid(row=0, column=0, pady=30, padx=30)
+
+# Creates score label
+score_label = tk.Label(window, font=("Helvetica", 36), fg="white", bg="#FFD700") 
+score_label.grid(row=0, column=0, pady=30, padx=30)
 
 
 def countdown(count):
@@ -51,7 +59,6 @@ def countdown(count):
         in_game = False
         return False
 
-
 grid_frame = tk.Frame(canvas,
                       width=700,
                       height=700,
@@ -66,9 +73,17 @@ test_frame = tk.Frame(canvas,
                       highlightthickness=10,
                       background="#FFD700")
 
+temp_frame = tk.Frame(canvas,
+                      width=150,
+                      height=50,
+                      highlightbackground="white",
+                      highlightthickness=10,
+                      background="#FFD700")
+
 # create windows for frames on canvas now that they are defined
 canvas.create_window(50, 150, anchor="nw", window=grid_frame)
-canvas.create_text(75, 25, text="CREDITS", font=("Arial", 20), fill="white")
+canvas.create_text(105, 50, text="CREDITS", font=("Arial", 20), fill="white")
+canvas.create_text(625, 50, text="TIME LEFT:", font=("Arial", 20), fill="white")
 
 # Create all image objects.
 button_dimensions = 60
@@ -126,8 +141,10 @@ selected = None
 
 in_game = False
 
+# updating score variable in score_label
 score = 0
-
+score_label.config(text=str(score), fg="white")
+window.after(1000, score)
 
 def button_click_handler(row, col):
     # If no button has been selected yet, store this position
@@ -455,5 +472,7 @@ def board_is_softlocked(gameboard):
 
 if __name__ == "__main__":
     init_board(gameboard)
+    countdown(120)
+    temp(120)
     # Tells Python to run the event loop, blocks any code after from running until you close the window
     window.mainloop()
