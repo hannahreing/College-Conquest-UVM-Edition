@@ -31,7 +31,7 @@ timer_frame.grid(row=0, column=9, pady=30, padx=30)
 
 # Creates timer label
 timer_label = tk.Label(window, font=("Helvetica", 36),
-                       fg="white", bg="#FFD700")
+                       fg="#154734", bg="#FFD700")
 timer_label.grid(row=0, column=9, pady=30, padx=30)
 
 #creates a frame for the score
@@ -39,11 +39,12 @@ score_frame = tk.Frame(window, width=200, height=70, bg="#FFD700", highlightback
 score_frame.grid(row=0, column=0, pady=30, padx=30)
 
 # Creates score label
-score_label = tk.Label(window, font=("Helvetica", 36), fg="white", bg="#FFD700") 
+score_label = tk.Label(window, font=("Helvetica", 36), fg="#154734", bg="#FFD700") 
 score_label.grid(row=0, column=0, pady=30, padx=30)
 
 
 def countdown(count):
+    global in_game
     # convert seconds to minutes and seconds
     minutes = count // 60
     seconds = count % 60
@@ -51,7 +52,7 @@ def countdown(count):
 
     if count > 0:
         # update the label every 1000 milliseconds (1 second)
-        timer_label.config(text=time_format, fg="white")
+        timer_label.config(text=time_format, fg="#154734")
         window.after(1000, countdown, count-1)
     else:
         timer_label.config(text="Time's up!", font=(
@@ -321,6 +322,7 @@ def matchfinder(gameboard):
 
 
 def matchremover(matches):
+    global score
     # Collect all coordinates to remove (unduplicate)
     coords = set()
     for group in matches:
@@ -335,6 +337,8 @@ def matchremover(matches):
                 btn.destroy()
                 if in_game:
                     score += 3
+                    score_label.config(text=score, font=("Helvetica", 36),
+                    fg="#154734")
             except Exception:
                 pass
         gameboard[row][col] = None
