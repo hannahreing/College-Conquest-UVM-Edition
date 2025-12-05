@@ -60,7 +60,8 @@ def countdown(count):
         timer_label.config(text="Time's up!", font=(
             "Helvetica", 24), fg="#154734")
         in_game = False
-        return False
+
+    return False
 
 
 grid_frame = tk.Frame(canvas,
@@ -507,5 +508,6 @@ def board_is_softlocked(gameboard):
 if __name__ == "__main__":
     init_board(gameboard)
     countdown(60)
+
     # Tells Python to run the event loop, blocks any code after from running until you close the window
     window.mainloop()
